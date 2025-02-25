@@ -1,7 +1,6 @@
 'use client';
 
 import { UITheme } from '@/lib/theme-utils';
-import { getColorAs } from '@/lib/color-utils';
 import Color from 'colorjs.io';
 
 interface ThemePreviewProps {
@@ -22,7 +21,7 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
       const blackContrast = bgColor.contrast(black, 'WCAG21');
       
       return whiteContrast > blackContrast ? 'white' : 'black';
-    } catch (e) {
+    } catch {
       return 'black'; // За замовчуванням
     }
   };

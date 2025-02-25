@@ -1,7 +1,7 @@
 'use client';
 
 import Color from 'colorjs.io';
-import { ColorPalette, ColorEntry } from '@/lib/palette-utils';
+import { ColorPalette } from '@/lib/palette-utils';
 import { generateUUID } from './uuid-utils';
 
 // Інтерфейс для налаштувань плейсхолдера
@@ -118,7 +118,7 @@ export function checkContrast(color1: string, color2: string): number {
     const c1 = new Color(color1);
     const c2 = new Color(color2);
     return c1.contrast(c2, 'WCAG21');
-  } catch (e) {
+  } catch {
     return 1; // Мінімальний контраст у разі помилки
   }
 }
@@ -136,7 +136,7 @@ export function getTextColorForBackground(backgroundColor: string): string {
     const blackContrast = bgColor.contrast(black, 'WCAG21');
     
     return whiteContrast > blackContrast ? 'white' : 'black';
-  } catch (e) {
+  } catch {
     return 'black'; // За замовчуванням
   }
 }
@@ -174,7 +174,7 @@ export function createThemeFromPalette(
   
   // Перевіряємо контраст між фоном та текстом
   let finalTextColor = textColor;
-  let finalBackgroundColor = backgroundColor;
+  const finalBackgroundColor = backgroundColor;
   
   // Перевіряємо, чи достатній контраст
   const contrast = checkContrast(backgroundColor, textColor);

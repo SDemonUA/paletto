@@ -7,26 +7,25 @@ import StrategySelector from '@/components/StrategySelector';
 import PaletteDisplay from '@/components/PaletteDisplay';
 import ThemePreview from '@/components/ThemePreview';
 import PlaceholderColorPicker from '@/components/PlaceholderColorPicker';
-import { createPalette, PaletteStrategy, ColorPalette, ColorEntry } from '@/lib/palette-utils';
-import { createThemeFromPalette, UITheme, PlaceholderSettings } from '@/lib/theme-utils';
+import { createPalette, PaletteStrategy, ColorPalette } from '@/lib/palette-utils';
+import { createThemeFromPalette, UITheme, PlaceholderSettings, ThemeSettings } from '@/lib/theme-utils';
 import Color from 'colorjs.io';
 
 export default function Step1() {
   const router = useRouter();
   const [baseColor, setBaseColor] = useState<Color>(new Color('#3498db'));
   const [strategy, setStrategy] = useState<PaletteStrategy>(PaletteStrategy.ANALOGOUS);
-  const [palette, setPalette] = useState<ColorPalette | null>(null);
+  const [palette, setPalette] = useState<ColorPalette | null>(
+    createPalette(new Color('#3498db'), PaletteStrategy.ANALOGOUS)
+  );
   const [theme, setTheme] = useState<UITheme | null>(null);
   
   // Створюємо палітру при зміні базового кольору або стратегії
   useEffect(() => {
-    const newPalette = createPalette(baseColor, strategy);
-    setPalette(newPalette);
-    
-    // Створюємо тему на основі палітри
-    if (newPalette) {
-      // Зберігаємо існуючі налаштування, якщо вони є
-      const settings = theme ? theme.settings : {
+    if (baseColor && strategy) {
+      const newPalette = createPalette(baseColor, strategy);
+      
+      const settings: ThemeSettings = {
         isDarkMode: false,
         contrastLevel: 3,
         placeholders: {
@@ -80,15 +79,6 @@ export default function Step1() {
     setBaseColor(randomColor);
   };
   
-  // Заглушки для обробників подій PaletteDisplay
-  const handleColorChange = (index: number, newColor: ColorEntry) => {
-    // Заглушка
-  };
-  
-  const handleColorLockToggle = (index: number, color: ColorEntry) => {
-    // Заглушка
-  };
-  
   // Обробник для зміни налаштувань плейсхолдера
   const handlePlaceholderChange = (
     placeholder: 'background' | 'text',
@@ -123,28 +113,42 @@ export default function Step1() {
   }
   
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Створення палітри кольорів</h1>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Крок 1: Створення палітри</h1>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Базовий колір</h2>
             <BaseColorPicker color={baseColor} onChange={handleBaseColorChange} />
-            
             <div className="mt-4">
-              <button
+              <button 
                 onClick={handleRandomBaseColor}
-                className="w-full py-2 px-4 bg-indigo-100 text-indigo-700 rounded-md hover:bg-indigo-200 transition-colors"
+                className="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
               >
                 Випадковий колір
               </button>
             </div>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Стратегія палітри</h2>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Стратегія</h2>
             <StrategySelector selectedStrategy={strategy} onStrategyChange={handleStrategyChange} />
+            <div className="mt-4">
+              <button 
+                onClick={handleRegeneratePalette}
+                className="w-full py-2 px-4 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+              >
+                Перегенерувати
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div className="md:col-span-2 space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Палітра кольорів</h2>
+            {palette && <PaletteDisplay palette={palette} />}
           </div>
           
           <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
@@ -168,24 +172,6 @@ export default function Step1() {
             />
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-            <h2 className="text-xl font-semibold mb-4">Палітра кольорів</h2>
-            <PaletteDisplay 
-              palette={palette} 
-              onColorChange={handleColorChange} 
-              onColorLockToggle={handleColorLockToggle} 
-            />
-            
-            <div className="mt-4">
-              <button
-                onClick={handleRegeneratePalette}
-                className="w-full py-2 px-4 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-              >
-                Перегенерувати палітру
-              </button>
-            </div>
-          </div>
-          
           <div className="mt-6">
             <button
               onClick={goToNextStep}
@@ -196,10 +182,10 @@ export default function Step1() {
             </button>
           </div>
         </div>
-        
-        <div>
-          <ThemePreview theme={theme} />
-        </div>
+      </div>
+      
+      <div className="mt-6">
+        <ThemePreview theme={theme} />
       </div>
     </div>
   );

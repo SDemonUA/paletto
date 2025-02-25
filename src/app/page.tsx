@@ -72,11 +72,11 @@ export default function WelcomePage() {
         <div className="mt-16 bg-white rounded-xl shadow-md p-8">
           <h2 className="text-2xl font-semibold text-indigo-700 mb-6 text-center">Технології використані у проекті</h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            <TechCard name="Next.js" icon="/next-js.svg" fallbackIcon="🔺" url="https://nextjs.org/" />
-            <TechCard name="React" icon="/react.svg" fallbackIcon="⚛️" url="https://react.dev/" />
-            <TechCard name="Tailwind CSS" icon="/tailwind.svg" fallbackIcon="🌊" url="https://tailwindcss.com/" />
-            <TechCard name="colorjs.io" icon="/colorjs.svg" fallbackIcon="🌈" url="https://colorjs.io/" />
-            <TechCard name="Cursor AI" icon="/cursor.svg" fallbackIcon="🤖" url="https://www.cursor.com/" />
+            <TechCard name="Next.js" icon="🔺" url="https://nextjs.org/" />
+            <TechCard name="React" icon="⚛️" url="https://react.dev/" />
+            <TechCard name="Tailwind CSS" icon="🌊" url="https://tailwindcss.com/" />
+            <TechCard name="colorjs.io" icon="🌈" url="https://colorjs.io/" />
+            <TechCard name="Cursor AI" icon="🤖" url="https://www.cursor.com/" />
           </div>
         </div>
         
@@ -111,13 +111,12 @@ interface TechCardProps {
   name: string;
   icon: string;
   url: string;
-  fallbackIcon: string;
 }
 
-function TechCard({ name, url, icon, fallbackIcon }: TechCardProps) {
+function TechCard({ name, url, icon }: TechCardProps) {
   return (
     <a href={url} className="flex flex-col items-center justify-center p-4 rounded-lg hover:bg-indigo-50 transition-colors">
-      <div className="text-3xl mb-2">{fallbackIcon}</div>
+      <div className="text-3xl mb-2">{icon}</div>
       <div className="text-sm font-medium text-gray-800">{name}</div>
     </a>
   );

@@ -23,7 +23,7 @@ export default function BaseColorPicker({ color, onChange }: BaseColorPickerProp
       // Перевіряємо, чи є введене значення валідним кольором
       const newColor = new Color(newHex);
       onChange(newColor);
-    } catch (error) {
+    } catch {
       // Ігноруємо невалідні кольори
     }
   };
@@ -45,7 +45,7 @@ export default function BaseColorPicker({ color, onChange }: BaseColorPickerProp
     try {
       const newColor = new Color(colorHex);
       onChange(newColor);
-    } catch (error) {
+    } catch {
       // Ігноруємо невалідні кольори
     }
   };
@@ -60,7 +60,7 @@ export default function BaseColorPicker({ color, onChange }: BaseColorPickerProp
       const blackContrast = backgroundColor.contrast(black, 'WCAG21');
       
       return whiteContrast > blackContrast ? 'white' : 'black';
-    } catch (e) {
+    } catch {
       return 'black'; // За замовчуванням
     }
   };

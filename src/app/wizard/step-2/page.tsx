@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createThemeFromPalette, UITheme } from '@/lib/theme-utils';
+import { createThemeFromPalette, UITheme, PlaceholderSettings } from '@/lib/theme-utils';
 import { createPalette, PaletteStrategy } from '@/lib/palette-utils';
 import ThemePreview from '@/components/ThemePreview';
 import PlaceholderColorPicker from '@/components/PlaceholderColorPicker';
@@ -65,7 +65,7 @@ export default function Step2() {
   // Функція для оновлення налаштувань плейсхолдера
   const updatePlaceholderSettings = (
     placeholder: 'background' | 'text',
-    settings: any
+    settings: PlaceholderSettings
   ) => {
     if (!theme) return;
     

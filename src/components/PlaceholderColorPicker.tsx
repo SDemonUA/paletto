@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { ColorPalette } from '@/lib/palette-utils';
 import { PlaceholderSettings } from '@/lib/theme-utils';
-import Color from 'colorjs.io';
 
 interface PlaceholderColorPickerProps {
   label: string;
@@ -50,7 +49,7 @@ export default function PlaceholderColorPicker({
             const adjustedColor = colorEntry.color.clone();
             adjustedColor.set('lch.c', adjustedColor.get('lch.c') * (settings.saturation / 100));
             return adjustedColor.toString({format: 'hex'});
-          } catch (e) {
+          } catch {
             return colorEntry.color.toString({format: 'hex'});
           }
         }

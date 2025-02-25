@@ -28,7 +28,7 @@ export default function ColorPicker({ color, onChange, onLockToggle }: ColorPick
         ...color,
         color: newColor
       });
-    } catch (error) {
+    } catch {
       // Ігноруємо невалідні кольори
     }
   };
