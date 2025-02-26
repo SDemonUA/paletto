@@ -4,10 +4,12 @@ import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
+  subsets: ['latin', 'cyrillic'],
 })
 
 const overpass = Overpass({
   variable: '--font-overpass',
+  subsets: ['latin', 'cyrillic'],
 })
 
 // const geistSans = Geist({
