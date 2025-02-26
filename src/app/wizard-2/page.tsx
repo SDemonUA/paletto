@@ -6,13 +6,17 @@ import {
   createColor,
   generatePaletteColors,
   getContrastTextColor,
-  createPalette,
 } from '@/lib/color-utils'
 import Color from 'colorjs.io'
 import nearestColor from 'nearest-color'
 import { colornames } from 'color-name-list'
 import { useRouter } from 'next/navigation'
 import { createThemeFromPalette } from '@/lib/theme-utils'
+import {
+  createPalette as createPaletteFromLib,
+  PaletteStrategy,
+} from '@/lib/palette-utils'
+import { generateUUID } from '@/lib/utils'
 
 // Create a dictionary of named colors
 const colors = colornames.reduce(
@@ -170,9 +174,16 @@ export default function Wizard2() {
           activeStep={step}
           onNext={() => {
             // Створюємо палітру
-            const palette = createPalette(baseColor, 'complementary')
+            const palette = createPaletteFromLib(
+              new Color(baseColor),
+              PaletteStrategy.COMPLEMENTARY
+            )
             // Додаємо другорядний колір
-            palette.colors.push(createColor(secondaryColor))
+            palette.colors.push({
+              id: generateUUID(),
+              name: 'Secondary',
+              color: new Color(secondaryColor),
+            })
 
             // Створюємо тему
             const theme = createThemeFromPalette(palette, {

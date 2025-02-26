@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { UITheme } from '@/lib/theme-utils'
 import { createPalette, PaletteStrategy } from '@/lib/palette-utils'
@@ -14,6 +14,20 @@ interface ExtendedUITheme extends UITheme {
 }
 
 export default function ThemePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900" />
+        </div>
+      }
+    >
+      <ThemePageContent />
+    </Suspense>
+  )
+}
+
+function ThemePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [theme, setTheme] = useState<ExtendedUITheme | null>(null)

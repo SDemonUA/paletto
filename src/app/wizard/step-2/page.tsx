@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import {
   createThemeFromPalette,
@@ -13,7 +13,7 @@ import PlaceholderColorPicker from '@/components/PlaceholderColorPicker'
 import ContrastLevelPicker from '@/components/ContrastLevelPicker'
 import Color from 'colorjs.io'
 
-export default function Step2() {
+function Step2Content() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [theme, setTheme] = useState<UITheme | null>(null)
@@ -210,5 +210,13 @@ export default function Step2() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function Step2() {
+  return (
+    <Suspense fallback={<div className="p-4">Завантаження...</div>}>
+      <Step2Content />
+    </Suspense>
   )
 }
