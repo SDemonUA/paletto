@@ -220,6 +220,12 @@ export const checkContrast = (foreground: PalettoColor, background: PalettoColor
   };
 };
 
+export const getContrastTextColor = (color: Color | string) => {
+  const colorObj = color instanceof Color ? color : new Color(color);
+  const wcag2 = colorObj.contrast(new Color("white"), "WCAG21");
+  return wcag2 >= 4.5 ? "white" : "black";
+};
+
 // Отримання кольору в різних форматах
 export const getColorAs = (palettoColor: PalettoColor, format: string = "hex"): string => {
   return palettoColor.color.toString({format});
