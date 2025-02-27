@@ -16,7 +16,7 @@ import {
   createPalette as createPaletteFromLib,
   PaletteStrategy,
 } from '@/lib/palette-utils'
-import { generateUUID } from '@/lib/utils'
+import { generateUUID, serializeWithColor } from '@/lib/utils'
 
 // Create a dictionary of named colors
 const colors = colornames.reduce(
@@ -197,7 +197,7 @@ export default function Wizard2() {
 
             // Серіалізуємо тему в URL
             const themeQuery = encodeURIComponent(
-              JSON.stringify({
+              serializeWithColor({
                 ...theme,
                 spacing,
                 rounding,

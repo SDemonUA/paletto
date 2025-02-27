@@ -12,6 +12,7 @@ import ThemePreview from '@/components/ThemePreview'
 import PlaceholderColorPicker from '@/components/PlaceholderColorPicker'
 import ContrastLevelPicker from '@/components/ContrastLevelPicker'
 import Color from 'colorjs.io'
+import { deserializeWithColor, serializeWithColor } from '@/lib/utils'
 
 function Step2Content() {
   const router = useRouter()
@@ -27,7 +28,7 @@ function Step2Content() {
 
     if (themeData && paletteData) {
       try {
-        const savedTheme = JSON.parse(decodeURIComponent(themeData))
+        const savedTheme = deserializeWithColor(themeData) as UITheme
         setTheme(savedTheme)
         setIsDarkMode(savedTheme.settings.isDarkMode)
         return
@@ -113,7 +114,7 @@ function Step2Content() {
     }
 
     // Серіалізуємо тему в URL
-    const themeQuery = encodeURIComponent(JSON.stringify(extendedTheme))
+    const themeQuery = encodeURIComponent(serializeWithColor(extendedTheme))
     router.push(`/theme?data=${themeQuery}`)
   }
 

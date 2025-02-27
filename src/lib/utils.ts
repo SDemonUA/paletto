@@ -1,6 +1,4 @@
-/**
- * Утиліти для генерації унікальних ідентифікаторів
- */
+import Color from "colorjs.io";
 
 /**
  * Генерує UUID, сумісний з браузером
@@ -19,3 +17,31 @@ export function generateUUID(): string {
     return v.toString(16);
   });
 } 
+
+function isColorConstructor(value: unknown): boolean {
+  if (value && typeof value === 'object') {
+    if ("spaceId" in value && "coords" in value && "alpha" in value) {
+      return true
+    }
+  }
+  return false
+}
+
+export function serializeWithColor(obj: unknown): string {
+  return JSON.stringify(obj, (key, value) => {
+    if (value instanceof Color || isColorConstructor(value)) {
+      return { __color__: Color.get(value).toString({ format: 'hex' }) };
+    }
+    
+    return value;
+  });
+}
+
+export function deserializeWithColor(serialized: string): unknown {
+  return JSON.parse(serialized, (key, value) => {
+    if (value && value.__color__) {
+      return new Color(value.__color__);
+    }
+    return value;
+  });
+}

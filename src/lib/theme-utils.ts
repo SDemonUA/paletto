@@ -27,6 +27,8 @@ export interface UITheme {
   id: string;
   palette: ColorPalette;
   settings: ThemeSettings;
+  rounding?: number;
+  spacing?: number;
   themeProps: {
     background: {
       default: string;
@@ -156,8 +158,8 @@ export function createThemeFromPalette(
   }
 ): UITheme {
   // Значення за замовчуванням
-  const defaultBackground = settings.isDarkMode ? '#121212' : '#ffffff';
-  const defaultText = settings.isDarkMode ? '#ffffff' : '#121212';
+  const defaultBackground = settings.isDarkMode ? 'hsl(240, 10%, 3.9%)' : 'hsl(0, 0%, 100%)';
+  const defaultText = settings.isDarkMode ? 'hsl(0, 0%, 98%)' : 'hsl(240, 10%, 3.9%)';
   
   // Отримуємо кольори для фону та тексту
   const backgroundColor = getColorFromPlaceholderSettings(
@@ -218,14 +220,14 @@ export function createThemeFromPalette(
     : primaryColor.clone().set('lch.h', (primaryColor.get('lch.h') + 180) % 360);
   
   // Створюємо кольори для сповіщень
-  const infoColor = new Color('#2196f3');
-  const successColor = new Color('#4caf50');
-  const warningColor = new Color('#ff9800');
-  const errorColor = new Color('#f44336');
+  const infoColor = new Color('hsl(210, 100%, 56%)');
+  const successColor = new Color('hsl(120, 61%, 34%)');
+  const warningColor = new Color('hsl(39, 100%, 50%)');
+  const errorColor = new Color('hsl(0, 100%, 50%)');
   
   // Функція для створення кольорів кнопок
   const createButtonColors = (baseColor: Color) => {
-    const bgColor = baseColor.toString({format: 'hex'});
+    const bgColor = baseColor.toString({format: 'hsl'});
     const textColor = getTextColorForBackground(bgColor);
     
     return {
@@ -250,8 +252,8 @@ export function createThemeFromPalette(
     bgColor.set('lch.l', settings.isDarkMode ? 30 : 90);
     bgColor.set('lch.c', bgColor.get('lch.c') * 0.5);
     
-    const bgColorHex = bgColor.toString({format: 'hex'});
-    const textColorHex = baseColor.toString({format: 'hex'});
+    const bgColorHex = bgColor.toString({format: 'hsl'});
+    const textColorHex = baseColor.toString({format: 'hsl'});
     
     // Перевіряємо контраст
     const alertContrast = checkContrast(bgColorHex, textColorHex);
@@ -270,16 +272,18 @@ export function createThemeFromPalette(
     id: generateUUID(),
     palette,
     settings,
+    rounding: 8,
+    spacing: 8,
     themeProps: {
       background: {
         default: finalBackgroundColor,
-        paper: paperBg.toString({format: 'hex'}),
-        component: componentBg.toString({format: 'hex'})
+        paper: paperBg.toString({format: 'hsl'}),
+        component: componentBg.toString({format: 'hsl'})
       },
       text: {
         primary: finalTextColor,
-        secondary: secondaryText.toString({format: 'hex'}),
-        disabled: disabledText.toString({format: 'hex'})
+        secondary: secondaryText.toString({format: 'hsl'}),
+        disabled: disabledText.toString({format: 'hsl'})
       },
       alerts: {
         info: createAlertColors(infoColor),
@@ -291,18 +295,18 @@ export function createThemeFromPalette(
         primary: createButtonColors(primaryColor),
         secondary: createButtonColors(secondaryColor),
         error: createButtonColors(errorColor),
-        muted: createButtonColors(new Color('#9e9e9e')),
+        muted: createButtonColors(new Color('hsl(0, 0%, 60%)')),
         disabled: {
           contained: { 
-            background: '#e0e0e0', 
-            text: '#9e9e9e' 
+            background: 'hsl(0, 0%, 88%)', 
+            text: 'hsl(0, 0%, 60%)' 
           },
           outlined: { 
-            border: '#bdbdbd', 
-            text: '#9e9e9e' 
+            border: 'hsl(0, 0%, 74%)', 
+            text: 'hsl(0, 0%, 60%)' 
           },
           text: { 
-            text: '#9e9e9e' 
+            text: 'hsl(0, 0%, 60%)' 
           }
         }
       }

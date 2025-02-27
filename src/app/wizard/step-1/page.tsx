@@ -19,6 +19,7 @@ import {
   ThemeSettings,
 } from '@/lib/theme-utils'
 import Color from 'colorjs.io'
+import { serializeWithColor } from '@/lib/utils'
 
 export default function Step1() {
   const router = useRouter()
@@ -113,8 +114,8 @@ export default function Step1() {
   const goToNextStep = () => {
     // Тут можна зберегти палітру та тему в localStorage або в стейт-менеджері
     if (theme && palette) {
-      const themeQuery = encodeURIComponent(JSON.stringify(theme))
-      const paletteQuery = encodeURIComponent(JSON.stringify(palette))
+      const themeQuery = encodeURIComponent(serializeWithColor(theme))
+      const paletteQuery = encodeURIComponent(serializeWithColor(palette))
       router.push(`/wizard/step-2?theme=${themeQuery}&palette=${paletteQuery}`)
     }
   }

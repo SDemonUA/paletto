@@ -5,13 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { UITheme } from '@/lib/theme-utils'
 import { createPalette, PaletteStrategy } from '@/lib/palette-utils'
 import { createThemeFromPalette } from '@/lib/theme-utils'
+import {
+  createShadcnConfig,
+  createMuiConfig,
+  createHeroConfig,
+} from '@/lib/theme-export'
 import Color from 'colorjs.io'
-
-// Розширюємо інтерфейс UITheme
-interface ExtendedUITheme extends UITheme {
-  spacing?: number
-  rounding?: number
-}
+import ThemePreview from '@/components/ThemePreview'
+import { deserializeWithColor, serializeWithColor } from '@/lib/utils'
 
 export default function ThemePage() {
   return (
@@ -27,152 +28,79 @@ export default function ThemePage() {
   )
 }
 
+// Функція для створення теми за замовчуванням
+const createDefaultTheme = () => {
+  // Створюємо базову палітру з синім кольором
+  const palette = createPalette(
+    new Color('#2196f3'),
+    PaletteStrategy.COMPLEMENTARY
+  )
+
+  // Створюємо тему
+  const newTheme = createThemeFromPalette(palette, {
+    isDarkMode: false,
+    contrastLevel: 4.5,
+    placeholders: {
+      background: { useDefault: true },
+      text: { useDefault: true },
+    },
+  })
+
+  return newTheme
+}
+
 function ThemePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [theme, setTheme] = useState<ExtendedUITheme | null>(null)
+  const [theme, setTheme] = useState<UITheme | null>(null)
   const [selectedLibrary, setSelectedLibrary] = useState<
     'shadcn' | 'mui' | 'heroui'
   >('shadcn')
+  const [copySuccess, setCopySuccess] = useState<boolean>(false)
 
   useEffect(() => {
     // Отримуємо тему з URL
     const themeData = searchParams.get('data')
-
     if (themeData) {
       try {
         // Намагаємося розпарсити тему
-        const parsedTheme = JSON.parse(decodeURIComponent(themeData))
+        const parsedTheme = deserializeWithColor(themeData) as UITheme
         setTheme(parsedTheme)
+        return
       } catch (error) {
         console.error('Помилка парсингу теми:', error)
-        createDefaultTheme()
       }
-    } else {
-      createDefaultTheme()
     }
-  }, [searchParams])
 
-  // Функція для створення теми за замовчуванням
-  const createDefaultTheme = () => {
-    // Створюємо базову палітру з синім кольором
-    const palette = createPalette(
-      new Color('#2196f3'),
-      PaletteStrategy.COMPLEMENTARY
-    )
-
-    // Створюємо тему
-    const newTheme = createThemeFromPalette(palette, {
-      isDarkMode: false,
-      contrastLevel: 4.5,
-      placeholders: {
-        background: { useDefault: true },
-        text: { useDefault: true },
-      },
-    })
-
-    // Серіалізуємо тему в URL
-    const themeQuery = encodeURIComponent(JSON.stringify(newTheme))
-    router.push(`/theme?data=${themeQuery}`)
-  }
+    const newTheme = createDefaultTheme()
+    router.push(`/theme?data=${serializeWithColor(newTheme)}`)
+  }, [searchParams, router])
 
   // Функція для генерації конфігу теми в залежності від вибраної бібліотеки
   const generateThemeConfig = () => {
+    if (!theme) return ''
+
     switch (selectedLibrary) {
       case 'shadcn':
-        return `// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        background: '${theme?.themeProps.background.default}',
-        foreground: '${theme?.themeProps.text.primary}',
-        primary: {
-          DEFAULT: '${theme?.themeProps.buttons.primary.contained.background}',
-          foreground: '${theme?.themeProps.buttons.primary.contained.text}',
-        },
-        secondary: {
-          DEFAULT: '${
-            theme?.themeProps.buttons.secondary.contained.background
-          }',
-          foreground: '${theme?.themeProps.buttons.secondary.contained.text}',
-        },
-        destructive: {
-          DEFAULT: '${theme?.themeProps.buttons.error.contained.background}',
-          foreground: '${theme?.themeProps.buttons.error.contained.text}',
-        },
-        muted: {
-          DEFAULT: '${theme?.themeProps.background.component}',
-          foreground: '${theme?.themeProps.text.secondary}',
-        },
-      },
-      borderRadius: {
-        DEFAULT: '${(theme?.rounding || 4) * 4}px',
-      },
-      spacing: {
-        DEFAULT: '${(theme?.spacing || 4) * 4}px',
-      },
-    },
-  },
-}`
-
+        return createShadcnConfig(theme)
       case 'mui':
-        return `// theme.js
-import { createTheme } from '@mui/material/styles';
-
-export const theme = createTheme({
-  palette: {
-    background: {
-      default: '${theme?.themeProps.background.default}',
-      paper: '${theme?.themeProps.background.component}',
-    },
-    text: {
-      primary: '${theme?.themeProps.text.primary}',
-      secondary: '${theme?.themeProps.text.secondary}',
-    },
-    primary: {
-      main: '${theme?.themeProps.buttons.primary.contained.background}',
-      contrastText: '${theme?.themeProps.buttons.primary.contained.text}',
-    },
-    secondary: {
-      main: '${theme?.themeProps.buttons.secondary.contained.background}',
-      contrastText: '${theme?.themeProps.buttons.secondary.contained.text}',
-    },
-    error: {
-      main: '${theme?.themeProps.buttons.error.contained.background}',
-      contrastText: '${theme?.themeProps.buttons.error.contained.text}',
-    },
-  },
-  shape: {
-    borderRadius: ${(theme?.rounding || 4) * 4},
-  },
-  spacing: ${(theme?.spacing || 4) * 4},
-});`
-
+        return createMuiConfig(theme)
       case 'heroui':
-        return `// tailwind.config.js
-const colors = require('tailwindcss/colors')
+        return createHeroConfig(theme)
+      default:
+        return ''
+    }
+  }
 
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: '${theme?.themeProps.buttons.primary.contained.background}',
-        secondary: '${
-          theme?.themeProps.buttons.secondary.contained.background
-        }',
-        background: '${theme?.themeProps.background.default}',
-        error: '${theme?.themeProps.buttons.error.contained.background}',
-      },
-      borderRadius: {
-        DEFAULT: '${(theme?.rounding || 4) * 4}px',
-      },
-      spacing: {
-        DEFAULT: '${(theme?.spacing || 4) * 4}px',
-      },
-    },
-  },
-}`
+  // Функція для копіювання конфігу
+  const copyConfigToClipboard = async () => {
+    const config = generateThemeConfig()
+    try {
+      await navigator.clipboard.writeText(config)
+      setCopySuccess(true)
+      setTimeout(() => setCopySuccess(false), 2000)
+    } catch (err) {
+      console.error('Помилка копіювання:', err)
     }
   }
 
@@ -279,6 +207,8 @@ module.exports = {
         </div>
       </div>
 
+      <ThemePreview theme={theme} />
+
       {/* Селектор бібліотеки та відображення конфігу */}
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Експорт налаштувань</h2>
@@ -316,9 +246,17 @@ module.exports = {
           </button>
         </div>
 
-        <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-          <code>{generateThemeConfig()}</code>
-        </pre>
+        <div className="relative">
+          <button
+            onClick={copyConfigToClipboard}
+            className="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+          >
+            {copySuccess ? 'Скопійовано!' : 'Копіювати'}
+          </button>
+          <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+            <code>{generateThemeConfig()}</code>
+          </pre>
+        </div>
       </div>
     </div>
   )
