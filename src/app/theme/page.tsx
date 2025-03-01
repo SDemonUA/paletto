@@ -11,8 +11,17 @@ import {
   createHeroConfig,
 } from '@/lib/theme-export'
 import Color from 'colorjs.io'
+
 import ThemePreview from '@/components/ThemePreview'
 import { deserializeWithColor, serializeWithColor } from '@/lib/utils'
+import RangeInput from '@/components/RangeInput'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
+import ColorPicker2 from '@/components/ColorPicker2'
 
 export default function ThemePage() {
   return (
@@ -113,166 +122,359 @@ function ThemePageContent() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-bold mb-8">Редактор теми</h1>
+    <>
+      <div className="container">
+        <h1 className="text-4xl font-bold py-8">Редактор теми</h1>
 
-      {/* Відображення основних параметрів теми */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Секція відступів та округлення */}
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Відступи та округлення</h2>
-          <div className="flex flex-col gap-4">
-            <div>
-              <h3 className="font-bold mb-2">Базовий відступ</h3>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-2">
-                  <div className="w-4 h-4 bg-gray-200 rounded" />
-                  <div
-                    className="w-4 h-4 bg-gray-200 rounded"
-                    style={{ marginLeft: (theme.spacing || 4) * 4 }}
+        <Accordion type="multiple" className="w-full">
+          <AccordionItem value="spacing" className="border p-2 px-4 rounded-lg">
+            <AccordionTrigger className="text-lg font-bold cursor-pointer">
+              Відступ
+            </AccordionTrigger>
+            <AccordionContent className="py-2">
+              {/* Відображення основних параметрів теми */}
+              <div className="flex flex-col gap-2">
+                <RangeInput
+                  value={theme.spacing || 4}
+                  onChange={(value) => setTheme({ ...theme, spacing: value })}
+                  min={1}
+                  max={20}
+                  step={1}
+                  label="Відступ"
+                  getValueDescription={(value) => `${value}px`}
+                  description={
+                    <div
+                      className="grid grid-cols-[repeat(4,auto)] items-start w-auto justify-start"
+                      style={{ gap: theme.spacing }}
+                    >
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                      <div className="w-4 h-4 bg-gray-400 rounded" />
+                    </div>
+                  }
+                />
+                <RangeInput
+                  value={theme.rounding || 4}
+                  onChange={(value) => setTheme({ ...theme, rounding: value })}
+                  min={0}
+                  max={50}
+                  step={1}
+                  label="Округлення"
+                  getValueDescription={(value) => `${value}px`}
+                  description={
+                    <div
+                      className="w-full h-16 bg-gray-400"
+                      style={{ borderRadius: theme.rounding || 4 }}
+                    />
+                  }
+                />
+                <RangeInput
+                  value={theme.fontSize || 16}
+                  onChange={(value) => setTheme({ ...theme, fontSize: value })}
+                  min={12}
+                  max={24}
+                  step={1}
+                  label="Розмір шрифту"
+                  getValueDescription={(value) => `${value}px`}
+                  description={
+                    <span style={{ fontSize: theme.fontSize || 16 }}>
+                      The quick brown fox jumps over the lazy dog
+                    </span>
+                  }
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="colors" className="border p-2 px-4 rounded-lg">
+            <AccordionTrigger className="text-lg font-bold cursor-pointer">
+              Кольори
+            </AccordionTrigger>
+            <AccordionContent
+              style={{
+                backgroundColor: theme.themeProps.background.default,
+                padding: theme.spacing + 'px',
+              }}
+            >
+              <div
+                className="flex flex-col gap-2"
+                style={{
+                  backgroundColor: theme.themeProps.background.paper,
+                  padding: theme.spacing + 'px',
+                }}
+              >
+                <ColorPicker2
+                  label={
+                    <span style={{ color: theme.themeProps.text.primary }}>
+                      Головний текст
+                    </span>
+                  }
+                  color={theme.themeProps.text.primary}
+                  onChange={(color) =>
+                    setTheme({
+                      ...theme,
+                      themeProps: {
+                        ...theme.themeProps,
+                        text: {
+                          ...theme.themeProps.text,
+                          primary: color,
+                        },
+                      },
+                    })
+                  }
+                />
+                <ColorPicker2
+                  label={
+                    <span style={{ color: theme.themeProps.text.secondary }}>
+                      Другорядний текст
+                    </span>
+                  }
+                  color={theme.themeProps.text.secondary}
+                  onChange={(color) =>
+                    setTheme({
+                      ...theme,
+                      themeProps: {
+                        ...theme.themeProps,
+                        text: {
+                          ...theme.themeProps.text,
+                          secondary: color,
+                        },
+                      },
+                    })
+                  }
+                />
+                <ColorPicker2
+                  label={
+                    <span style={{ color: theme.themeProps.text.disabled }}>
+                      Приглушений текст
+                    </span>
+                  }
+                  color={theme.themeProps.text.disabled}
+                  onChange={(color) =>
+                    setTheme({
+                      ...theme,
+                      themeProps: {
+                        ...theme.themeProps,
+                        text: {
+                          ...theme.themeProps.text,
+                          disabled: color,
+                        },
+                      },
+                    })
+                  }
+                />
+
+                {/* Додані нові ColorPicker2 для основних кольорів */}
+                <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">
+                  <h3
+                    className="font-medium mb-2"
+                    style={{ color: theme.themeProps.text.primary }}
+                  >
+                    Основні кольори
+                  </h3>
+                  <ColorPicker2
+                    label={
+                      <span style={{ color: theme.themeProps.text.primary }}>
+                        Основний колір
+                      </span>
+                    }
+                    color={theme.palette.baseColor.toString({ format: 'hex' })}
+                    onChange={(color) =>
+                      setTheme({
+                        ...theme,
+                        palette: {
+                          ...theme.palette,
+                          baseColor: new Color(color),
+                        },
+                      })
+                    }
+                  />
+                  <ColorPicker2
+                    label={
+                      <span style={{ color: theme.themeProps.text.primary }}>
+                        Другорядний колір
+                      </span>
+                    }
+                    color={theme.palette.colors[1].color.toString({
+                      format: 'hex',
+                    })}
+                    onChange={(color) =>
+                      setTheme({
+                        ...theme,
+                        palette: {
+                          ...theme.palette,
+                          colors: [
+                            theme.palette.colors[0],
+                            {
+                              ...theme.palette.colors[1],
+                              color: new Color(color),
+                            },
+                            ...theme.palette.colors.slice(2),
+                          ],
+                        },
+                      })
+                    }
                   />
                 </div>
-                <span className="text-gray-500">
-                  {(theme.spacing || 4) * 4}px
-                </span>
+
+                {/* Додані нові ColorPicker2 для фонових кольорів */}
+                <div className="mt-4 pt-4 border-t border-gray-200 flex flex-col gap-2">
+                  <h3
+                    className="font-medium mb-2"
+                    style={{ color: theme.themeProps.text.primary }}
+                  >
+                    Фонові кольори
+                  </h3>
+                  <ColorPicker2
+                    label={
+                      <span style={{ color: theme.themeProps.text.primary }}>
+                        Основний фон
+                      </span>
+                    }
+                    color={theme.themeProps.background.default}
+                    onChange={(color) =>
+                      setTheme({
+                        ...theme,
+                        themeProps: {
+                          ...theme.themeProps,
+                          background: {
+                            ...theme.themeProps.background,
+                            default: color,
+                          },
+                        },
+                      })
+                    }
+                  />
+                  <ColorPicker2
+                    label={
+                      <span style={{ color: theme.themeProps.text.primary }}>
+                        Фон паперу
+                      </span>
+                    }
+                    color={theme.themeProps.background.paper}
+                    onChange={(color) =>
+                      setTheme({
+                        ...theme,
+                        themeProps: {
+                          ...theme.themeProps,
+                          background: {
+                            ...theme.themeProps.background,
+                            paper: color,
+                          },
+                        },
+                      })
+                    }
+                  />
+                  <ColorPicker2
+                    label={
+                      <span style={{ color: theme.themeProps.text.primary }}>
+                        Фон компонентів
+                      </span>
+                    }
+                    color={theme.themeProps.background.component}
+                    onChange={(color) =>
+                      setTheme({
+                        ...theme,
+                        themeProps: {
+                          ...theme.themeProps,
+                          background: {
+                            ...theme.themeProps.background,
+                            component: color,
+                          },
+                        },
+                      })
+                    }
+                  />
+                </div>
               </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 border rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Кнопки</h2>
+            <div className="flex flex-col gap-2">
+              <ButtonPreview
+                label="Основна"
+                colors={theme.themeProps.buttons.primary}
+              />
+              <ButtonPreview
+                label="Другорядна"
+                colors={theme.themeProps.buttons.secondary}
+              />
             </div>
+          </div>
 
-            <div>
-              <h3 className="font-bold mb-2">Базове округлення</h3>
-              <div className="flex items-center gap-4">
-                <div
-                  className="w-16 h-16 bg-gray-200"
-                  style={{ borderRadius: (theme.rounding || 4) * 4 }}
-                />
-                <span className="text-gray-500">
-                  {(theme.rounding || 4) * 4}px
-                </span>
-              </div>
+          <div className="p-4 border rounded-lg">
+            <h2 className="text-2xl font-bold mb-4">Сповіщення</h2>
+            <div className="flex flex-col gap-2">
+              <AlertPreview
+                label="Успіх"
+                colors={theme.themeProps.alerts.success}
+              />
+              <AlertPreview
+                label="Помилка"
+                colors={theme.themeProps.alerts.error}
+              />
             </div>
           </div>
         </div>
 
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Основні кольори</h2>
-          <div className="flex flex-col gap-2">
-            <ColorPreview
-              label="Фон"
-              color={theme.themeProps.background.default}
-            />
-            <ColorPreview label="Текст" color={theme.themeProps.text.primary} />
-          </div>
-        </div>
+        <ThemePreview theme={theme} />
 
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Компоненти</h2>
-          <div className="flex flex-col gap-2">
-            <ColorPreview
-              label="Фон компонентів"
-              color={theme.themeProps.background.component}
-            />
-            <ColorPreview
-              label="Другорядний текст"
-              color={theme.themeProps.text.secondary}
-            />
-          </div>
-        </div>
+        {/* Селектор бібліотеки та відображення конфігу */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Експорт налаштувань</h2>
 
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Кнопки</h2>
-          <div className="flex flex-col gap-2">
-            <ButtonPreview
-              label="Основна"
-              colors={theme.themeProps.buttons.primary}
-            />
-            <ButtonPreview
-              label="Другорядна"
-              colors={theme.themeProps.buttons.secondary}
-            />
+          <div className="flex gap-2 mb-4">
+            <button
+              className={`px-4 py-2 rounded ${
+                selectedLibrary === 'shadcn'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100'
+              }`}
+              onClick={() => setSelectedLibrary('shadcn')}
+            >
+              shadcn/ui
+            </button>
+            <button
+              className={`px-4 py-2 rounded ${
+                selectedLibrary === 'mui'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100'
+              }`}
+              onClick={() => setSelectedLibrary('mui')}
+            >
+              Material UI
+            </button>
+            <button
+              className={`px-4 py-2 rounded ${
+                selectedLibrary === 'heroui'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100'
+              }`}
+              onClick={() => setSelectedLibrary('heroui')}
+            >
+              Hero UI
+            </button>
           </div>
-        </div>
 
-        <div className="p-4 border rounded-lg">
-          <h2 className="text-2xl font-bold mb-4">Сповіщення</h2>
-          <div className="flex flex-col gap-2">
-            <AlertPreview
-              label="Успіх"
-              colors={theme.themeProps.alerts.success}
-            />
-            <AlertPreview
-              label="Помилка"
-              colors={theme.themeProps.alerts.error}
-            />
+          <div className="relative">
+            <button
+              onClick={copyConfigToClipboard}
+              className="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
+            >
+              {copySuccess ? 'Скопійовано!' : 'Копіювати'}
+            </button>
+            <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
+              <code>{generateThemeConfig()}</code>
+            </pre>
           </div>
         </div>
       </div>
-
-      <ThemePreview theme={theme} />
-
-      {/* Селектор бібліотеки та відображення конфігу */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Експорт налаштувань</h2>
-
-        <div className="flex gap-2 mb-4">
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedLibrary === 'shadcn'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100'
-            }`}
-            onClick={() => setSelectedLibrary('shadcn')}
-          >
-            shadcn/ui
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedLibrary === 'mui'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100'
-            }`}
-            onClick={() => setSelectedLibrary('mui')}
-          >
-            Material UI
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedLibrary === 'heroui'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100'
-            }`}
-            onClick={() => setSelectedLibrary('heroui')}
-          >
-            Hero UI
-          </button>
-        </div>
-
-        <div className="relative">
-          <button
-            onClick={copyConfigToClipboard}
-            className="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition-colors"
-          >
-            {copySuccess ? 'Скопійовано!' : 'Копіювати'}
-          </button>
-          <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-            <code>{generateThemeConfig()}</code>
-          </pre>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// Компонент для відображення кольору
-function ColorPreview({ label, color }: { label: string; color: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className="w-8 h-8 rounded-full border"
-        style={{ backgroundColor: color }}
-      />
-      <span>{label}</span>
-      <span className="text-gray-500 text-sm">{color}</span>
-    </div>
+    </>
   )
 }
 

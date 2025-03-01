@@ -1,4 +1,6 @@
 import Color from "colorjs.io";
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 /**
  * Генерує UUID, сумісний з браузером
@@ -44,4 +46,8 @@ export function deserializeWithColor(serialized: string): unknown {
     }
     return value;
   });
+}
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
 }

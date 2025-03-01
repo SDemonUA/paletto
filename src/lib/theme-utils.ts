@@ -29,6 +29,7 @@ export interface UITheme {
   settings: ThemeSettings;
   rounding?: number;
   spacing?: number;
+  fontSize?: number;
   themeProps: {
     background: {
       default: string;
@@ -274,6 +275,7 @@ export function createThemeFromPalette(
     settings,
     rounding: 8,
     spacing: 8,
+    fontSize: 16,
     themeProps: {
       background: {
         default: finalBackgroundColor,
