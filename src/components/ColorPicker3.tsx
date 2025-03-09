@@ -35,7 +35,6 @@ export default function ColorPicker3(props: ColorPickerProps) {
     const value = e.target.value
     try {
       const color = new Color(Color.parse(value))
-      console.log(value, color)
       onChange(color.to('sRGB').toString({ format: 'hsla' }))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {

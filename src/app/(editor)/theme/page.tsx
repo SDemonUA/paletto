@@ -17,6 +17,7 @@ import { deserializeWithColor, serializeWithColor } from '@/lib/utils'
 import RangeInput from '@/components/RangeInput'
 import { HEADER_HEIGHT } from '@/app/constants'
 import ColorPicker3 from '../../../components/ColorPicker3'
+import { Button } from '../../../components/ui/button'
 
 export default function ThemePage() {
   return (
@@ -52,6 +53,7 @@ const createDefaultTheme = () => {
 function ThemePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const [uiType, setUiType] = useState<'shadcn-ui' | 'mui' | 'heroui'>('mui')
   const [theme, setTheme] = useState<UITheme | null>(null)
   const [selectedLibrary, setSelectedLibrary] = useState<
     'shadcn' | 'mui' | 'heroui' | 'shadcn-css-vars'
@@ -119,6 +121,27 @@ function ThemePageContent() {
       sidebarTitle="Редактор теми"
       sidebarContent={
         <div>
+          <div>
+            <Button
+              variant={uiType === 'mui' ? 'default' : 'outline'}
+              onClick={() => setUiType('mui')}
+            >
+              Material UI
+            </Button>
+            <Button
+              variant={uiType === 'shadcn-ui' ? 'default' : 'outline'}
+              onClick={() => setUiType('shadcn-ui')}
+            >
+              shadcn/ui
+            </Button>
+            <Button
+              variant={uiType === 'heroui' ? 'default' : 'outline'}
+              onClick={() => setUiType('heroui')}
+            >
+              Hero UI
+            </Button>
+          </div>
+
           <h2 className="text-2xl font-bold mb-4">Відступи</h2>
           <div className="flex flex-col gap-2">
             <RangeInput
@@ -399,7 +422,7 @@ function ThemePageContent() {
         </div>
       }
     >
-      {theme && <Preview theme={theme} type="shadcn-ui" />}
+      {theme && <Preview theme={theme} type={uiType} />}
     </ContentWithDrawer>
   )
 }
@@ -537,7 +560,6 @@ function Preview({ theme, type }: { theme: UITheme; type: UIFramework }) {
   const [iframeLoaded, setIframeLoaded] = useState(false)
 
   const sendTheme = (theme: UITheme) => {
-    console.log(iframeLoaded, iframeRef.current?.contentWindow)
     if (iframeRef.current?.contentWindow) {
       iframeRef.current.contentWindow.postMessage(
         {

@@ -31,7 +31,6 @@ export default function ShadcnUIPreview() {
 
   useEffect(() => {
     window.addEventListener('message', (event) => {
-      console.log('event', event)
       if (event.data.type === 'SET_THEME') {
         const themeData = event.data.theme
         setTheme(deserializeWithColor(themeData) as UITheme)

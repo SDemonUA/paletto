@@ -196,94 +196,91 @@ export function createShadcnCssVarsConfig(theme: UITheme): string {
  * Створює конфігурацію теми для Material UI
  */
 export function createMuiConfig(theme: UITheme): string {
-  // Значення за замовчуванням у пікселях
-  const defaultRadius = 4
-  const defaultSpacing = 8
-
   return `// theme.js
 import { createTheme } from '@mui/material/styles';
 
-export const theme = createTheme({
-  palette: {
-    mode: '${theme.isDarkMode ? 'dark' : 'light'}',
-    background: {
-      default: '${getThemeColor(
-        theme.themeProps.background.default,
+export const theme = createTheme(${JSON.stringify(
+    createMuiThemeConfig(theme)
+  )});`
+}
+
+export function createMuiThemeConfig(theme: UITheme): unknown {
+  const defaultRadius = 4
+  const defaultSpacing = 8
+  return {
+    palette: {
+      mode: theme.isDarkMode ? 'dark' : 'light',
+      background: {
+        default: getThemeColor(
+          theme.themeProps.background.default,
+          theme.palette
+        ),
+        paper: getThemeColor(theme.themeProps.background.paper, theme.palette),
+      },
+      text: {
+        primary: getThemeColor(theme.themeProps.text.primary, theme.palette),
+        secondary: getThemeColor(
+          theme.themeProps.text.secondary,
+          theme.palette
+        ),
+        disabled: getThemeColor(theme.themeProps.text.disabled, theme.palette),
+      },
+      primary: {
+        main: getThemeColor(
+          theme.themeProps.buttons.primary.contained.background,
+          theme.palette
+        ),
+        contrastText: getThemeColor(
+          theme.themeProps.buttons.primary.contained.text,
+          theme.palette
+        ),
+      },
+      secondary: {
+        main: getThemeColor(
+          theme.themeProps.buttons.secondary.contained.background,
+          theme.palette
+        ),
+        contrastText: getThemeColor(
+          theme.themeProps.buttons.secondary.contained.text,
+          theme.palette
+        ),
+      },
+      error: {
+        main: getThemeColor(
+          theme.themeProps.buttons.error.contained.background,
+          theme.palette
+        ),
+        contrastText: getThemeColor(
+          theme.themeProps.buttons.error.contained.text,
+          theme.palette
+        ),
+      },
+      action: {
+        active: getThemeColor(
+          theme.themeProps.buttons.primary.contained.background,
+          theme.palette
+        ),
+        hover: getThemeColor(
+          theme.themeProps.buttons.primary.contained.background,
+          theme.palette
+        ),
+        disabled: getThemeColor(
+          theme.themeProps.buttons.disabled.contained.background,
+          theme.palette
+        ),
+        disabledBackground:
+          theme.themeProps.buttons.disabled.contained.background,
+      },
+      divider: getThemeColor(
+        theme.themeProps.buttons.muted.outlined.border,
         theme.palette
-      )}',
-      paper: '${getThemeColor(
-        theme.themeProps.background.paper,
-        theme.palette
-      )}',
+      ),
     },
-    text: {
-      primary: '${getThemeColor(theme.themeProps.text.primary, theme.palette)}',
-      secondary: '${getThemeColor(
-        theme.themeProps.text.secondary,
-        theme.palette
-      )}',
-      disabled: '${getThemeColor(
-        theme.themeProps.text.disabled,
-        theme.palette
-      )}',
+    shape: {
+      borderRadius: theme.rounding || defaultRadius,
     },
-    primary: {
-      main: '${getThemeColor(
-        theme.themeProps.buttons.primary.contained.background,
-        theme.palette
-      )}',
-      contrastText: '${getThemeColor(
-        theme.themeProps.buttons.primary.contained.text,
-        theme.palette
-      )}',
-    },
-    secondary: {
-      main: '${getThemeColor(
-        theme.themeProps.buttons.secondary.contained.background,
-        theme.palette
-      )}',
-      contrastText: '${getThemeColor(
-        theme.themeProps.buttons.secondary.contained.text,
-        theme.palette
-      )}',
-    },
-    error: {
-      main: '${getThemeColor(
-        theme.themeProps.buttons.error.contained.background,
-        theme.palette
-      )}',
-      contrastText: '${getThemeColor(
-        theme.themeProps.buttons.error.contained.text,
-        theme.palette
-      )}',
-    },
-    action: {
-      active: '${getThemeColor(
-        theme.themeProps.buttons.primary.contained.background,
-        theme.palette
-      )}',
-      hover: '${getThemeColor(
-        theme.themeProps.buttons.primary.contained.background,
-        theme.palette
-      )}20',
-      disabled: '${getThemeColor(
-        theme.themeProps.buttons.disabled.contained.background,
-        theme.palette
-      )}',
-      disabledBackground: '${
-        theme.themeProps.buttons.disabled.contained.background
-      }',
-    },
-    divider: '${getThemeColor(
-      theme.themeProps.buttons.muted.outlined.border,
-      theme.palette
-    )}',
-  },
-  shape: {
-    borderRadius: ${theme.rounding || defaultRadius},
-  },
-  spacing: ${theme.spacing || defaultSpacing},
-});`
+    spacing: theme.spacing || defaultSpacing,
+  }
 }
 
 /**
