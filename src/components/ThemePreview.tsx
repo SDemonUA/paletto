@@ -1,6 +1,6 @@
 'use client'
 
-import { UITheme } from '@/lib/theme-utils'
+import { UITheme, getThemeColor } from '@/lib/theme-utils'
 import Color from 'colorjs.io'
 
 interface ThemePreviewProps {
@@ -58,53 +58,122 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
 
         <div
           className="p-6"
-          style={{ backgroundColor: themeProps.background.default }}
+          style={{
+            backgroundColor: getThemeColor(
+              themeProps.background.default,
+              theme.palette
+            ),
+          }}
         >
           <div className="mb-6">
             <h2
               className="text-xl font-semibold mb-2"
-              style={{ color: themeProps.text.primary }}
+              style={{
+                color: getThemeColor(themeProps.text.primary, theme.palette),
+              }}
             >
               Основні кольори
             </h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div
                 className="p-4 rounded"
-                style={{ backgroundColor: themeProps.background.default }}
+                style={{
+                  backgroundColor: getThemeColor(
+                    themeProps.background.default,
+                    theme.palette
+                  ),
+                }}
               >
-                <span style={{ color: themeProps.text.primary }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.primary,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Фон за замовчуванням
                 </span>
               </div>
               <div
                 className="p-4 rounded"
-                style={{ backgroundColor: themeProps.background.paper }}
+                style={{
+                  backgroundColor: getThemeColor(
+                    themeProps.background.paper,
+                    theme.palette
+                  ),
+                }}
               >
-                <span style={{ color: themeProps.text.primary }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.primary,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Фон паперу
                 </span>
               </div>
               <div
                 className="p-4 rounded"
-                style={{ backgroundColor: themeProps.background.component }}
+                style={{
+                  backgroundColor: getThemeColor(
+                    themeProps.background.component,
+                    theme.palette
+                  ),
+                }}
               >
-                <span style={{ color: themeProps.text.primary }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.primary,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Фон компонента
                 </span>
               </div>
               <div
                 className="p-4 rounded"
-                style={{ backgroundColor: themeProps.background.default }}
+                style={{
+                  backgroundColor: getThemeColor(
+                    themeProps.background.default,
+                    theme.palette
+                  ),
+                }}
               >
-                <span style={{ color: themeProps.text.primary }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.primary,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Основний текст
                 </span>
                 <br />
-                <span style={{ color: themeProps.text.secondary }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.secondary,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Другорядний текст
                 </span>
                 <br />
-                <span style={{ color: themeProps.text.disabled }}>
+                <span
+                  style={{
+                    color: getThemeColor(
+                      themeProps.text.disabled,
+                      theme.palette
+                    ),
+                  }}
+                >
                   Неактивний текст
                 </span>
               </div>
@@ -115,20 +184,32 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
           <div className="mb-6">
             <h2
               className="text-xl font-semibold mb-2"
-              style={{ color: themeProps.text.primary }}
+              style={{
+                color: getThemeColor(themeProps.text.primary, theme.palette),
+              }}
             >
               Елементи форм
             </h2>
             <div
               className="p-4 rounded mb-4"
-              style={{ backgroundColor: themeProps.background.paper }}
+              style={{
+                backgroundColor: getThemeColor(
+                  themeProps.background.paper,
+                  theme.palette
+                ),
+              }}
             >
               <div className="space-y-4">
                 {/* Текстовий інпут */}
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Текстове поле
                   </label>
@@ -137,9 +218,18 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                     placeholder="Введіть текст"
                     className="w-full px-3 py-2 rounded border"
                     style={{
-                      backgroundColor: themeProps.background.component,
-                      color: themeProps.text.primary,
-                      borderColor: themeProps.buttons.primary.outlined.border,
+                      backgroundColor: getThemeColor(
+                        themeProps.background.component,
+                        theme.palette
+                      ),
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                      borderColor: getThemeColor(
+                        themeProps.buttons.primary.outlined.border,
+                        theme.palette
+                      ),
                     }}
                   />
                 </div>
@@ -148,7 +238,12 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Текстова область
                   </label>
@@ -157,9 +252,18 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                     rows={3}
                     className="w-full px-3 py-2 rounded border"
                     style={{
-                      backgroundColor: themeProps.background.component,
-                      color: themeProps.text.primary,
-                      borderColor: themeProps.buttons.primary.outlined.border,
+                      backgroundColor: getThemeColor(
+                        themeProps.background.component,
+                        theme.palette
+                      ),
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                      borderColor: getThemeColor(
+                        themeProps.buttons.primary.outlined.border,
+                        theme.palette
+                      ),
                     }}
                   />
                 </div>
@@ -168,16 +272,30 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Випадаючий список
                   </label>
                   <select
                     className="w-full px-3 py-2 rounded border"
                     style={{
-                      backgroundColor: themeProps.background.component,
-                      color: themeProps.text.primary,
-                      borderColor: themeProps.buttons.primary.outlined.border,
+                      backgroundColor: getThemeColor(
+                        themeProps.background.component,
+                        theme.palette
+                      ),
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                      borderColor: getThemeColor(
+                        themeProps.buttons.primary.outlined.border,
+                        theme.palette
+                      ),
                     }}
                   >
                     <option>Опція 1</option>
@@ -190,7 +308,12 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Чекбокси
                   </label>
@@ -200,11 +323,20 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                         type="checkbox"
                         className="mr-2 h-4 w-4"
                         style={{
-                          accentColor:
+                          accentColor: getThemeColor(
                             themeProps.buttons.primary.contained.background,
+                            theme.palette
+                          ),
                         }}
                       />
-                      <span style={{ color: themeProps.text.primary }}>
+                      <span
+                        style={{
+                          color: getThemeColor(
+                            themeProps.text.primary,
+                            theme.palette
+                          ),
+                        }}
+                      >
                         Опція 1
                       </span>
                     </div>
@@ -213,11 +345,20 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                         type="checkbox"
                         className="mr-2 h-4 w-4"
                         style={{
-                          accentColor:
+                          accentColor: getThemeColor(
                             themeProps.buttons.primary.contained.background,
+                            theme.palette
+                          ),
                         }}
                       />
-                      <span style={{ color: themeProps.text.primary }}>
+                      <span
+                        style={{
+                          color: getThemeColor(
+                            themeProps.text.primary,
+                            theme.palette
+                          ),
+                        }}
+                      >
                         Опція 2
                       </span>
                     </div>
@@ -228,7 +369,12 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Радіо кнопки
                   </label>
@@ -239,11 +385,20 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                         name="radio-group"
                         className="mr-2 h-4 w-4"
                         style={{
-                          accentColor:
+                          accentColor: getThemeColor(
                             themeProps.buttons.primary.contained.background,
+                            theme.palette
+                          ),
                         }}
                       />
-                      <span style={{ color: themeProps.text.primary }}>
+                      <span
+                        style={{
+                          color: getThemeColor(
+                            themeProps.text.primary,
+                            theme.palette
+                          ),
+                        }}
+                      >
                         Варіант 1
                       </span>
                     </div>
@@ -253,11 +408,20 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                         name="radio-group"
                         className="mr-2 h-4 w-4"
                         style={{
-                          accentColor:
+                          accentColor: getThemeColor(
                             themeProps.buttons.primary.contained.background,
+                            theme.palette
+                          ),
                         }}
                       />
-                      <span style={{ color: themeProps.text.primary }}>
+                      <span
+                        style={{
+                          color: getThemeColor(
+                            themeProps.text.primary,
+                            theme.palette
+                          ),
+                        }}
+                      >
                         Варіант 2
                       </span>
                     </div>
@@ -268,7 +432,12 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.primary }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.primary,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Слайдер
                   </label>
@@ -279,8 +448,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                     defaultValue="50"
                     className="w-full"
                     style={{
-                      accentColor:
+                      accentColor: getThemeColor(
                         themeProps.buttons.primary.contained.background,
+                        theme.palette
+                      ),
                     }}
                   />
                 </div>
@@ -289,7 +460,12 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <div>
                   <label
                     className="block mb-1 text-sm font-medium"
-                    style={{ color: themeProps.text.disabled }}
+                    style={{
+                      color: getThemeColor(
+                        themeProps.text.disabled,
+                        theme.palette
+                      ),
+                    }}
                   >
                     Вимкнене поле
                   </label>
@@ -299,9 +475,18 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                     disabled
                     className="w-full px-3 py-2 rounded border"
                     style={{
-                      backgroundColor: themeProps.background.component,
-                      color: themeProps.text.disabled,
-                      borderColor: themeProps.buttons.disabled.outlined.border,
+                      backgroundColor: getThemeColor(
+                        themeProps.background.component,
+                        theme.palette
+                      ),
+                      color: getThemeColor(
+                        themeProps.text.disabled,
+                        theme.palette
+                      ),
+                      borderColor: getThemeColor(
+                        themeProps.buttons.disabled.outlined.border,
+                        theme.palette
+                      ),
                     }}
                   />
                 </div>
@@ -313,7 +498,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
           <div className="mb-6">
             <h2
               className="text-xl font-semibold mb-2"
-              style={{ color: themeProps.text.primary }}
+              style={{
+                color: getThemeColor(themeProps.text.primary, theme.palette),
+              }}
             >
               Сповіщення
             </h2>
@@ -321,8 +508,11 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
               <div
                 className="p-3 rounded"
                 style={{
-                  backgroundColor: themeProps.alerts.info.background,
-                  color: themeProps.alerts.info.text,
+                  backgroundColor: getThemeColor(
+                    themeProps.info.background,
+                    theme.palette
+                  ),
+                  color: getThemeColor(themeProps.info.text, theme.palette),
                 }}
               >
                 Інформаційне сповіщення
@@ -330,8 +520,11 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
               <div
                 className="p-3 rounded"
                 style={{
-                  backgroundColor: themeProps.alerts.success.background,
-                  color: themeProps.alerts.success.text,
+                  backgroundColor: getThemeColor(
+                    themeProps.success.background,
+                    theme.palette
+                  ),
+                  color: getThemeColor(themeProps.success.text, theme.palette),
                 }}
               >
                 Успішне сповіщення
@@ -339,8 +532,11 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
               <div
                 className="p-3 rounded"
                 style={{
-                  backgroundColor: themeProps.alerts.warning.background,
-                  color: themeProps.alerts.warning.text,
+                  backgroundColor: getThemeColor(
+                    themeProps.warning.background,
+                    theme.palette
+                  ),
+                  color: getThemeColor(themeProps.warning.text, theme.palette),
                 }}
               >
                 Попереджувальне сповіщення
@@ -348,8 +544,11 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
               <div
                 className="p-3 rounded"
                 style={{
-                  backgroundColor: themeProps.alerts.error.background,
-                  color: themeProps.alerts.error.text,
+                  backgroundColor: getThemeColor(
+                    themeProps.error.background,
+                    theme.palette
+                  ),
+                  color: getThemeColor(themeProps.error.text, theme.palette),
                 }}
               >
                 Сповіщення про помилку
@@ -361,7 +560,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
           <div className="mb-6">
             <h2
               className="text-xl font-semibold mb-2"
-              style={{ color: themeProps.text.primary }}
+              style={{
+                color: getThemeColor(themeProps.text.primary, theme.palette),
+              }}
             >
               Кнопки
             </h2>
@@ -370,7 +571,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
             <div className="mb-4">
               <h3
                 className="text-lg mb-2"
-                style={{ color: themeProps.text.primary }}
+                style={{
+                  color: getThemeColor(themeProps.text.primary, theme.palette),
+                }}
               >
                 Contained
               </h3>
@@ -378,9 +581,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <button
                   className="px-4 py-2 rounded"
                   style={{
-                    backgroundColor:
+                    backgroundColor: getThemeColor(
                       themeProps.buttons.primary.contained.background,
-                    color: themeProps.buttons.primary.contained.text,
+                      theme.palette
+                    ),
+                    color: getThemeColor(
+                      themeProps.buttons.primary.contained.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Primary
@@ -388,9 +596,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <button
                   className="px-4 py-2 rounded"
                   style={{
-                    backgroundColor:
+                    backgroundColor: getThemeColor(
                       themeProps.buttons.secondary.contained.background,
-                    color: themeProps.buttons.secondary.contained.text,
+                      theme.palette
+                    ),
+                    color: getThemeColor(
+                      themeProps.buttons.secondary.contained.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Secondary
@@ -398,9 +611,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <button
                   className="px-4 py-2 rounded"
                   style={{
-                    backgroundColor:
+                    backgroundColor: getThemeColor(
                       themeProps.buttons.error.contained.background,
-                    color: themeProps.buttons.error.contained.text,
+                      theme.palette
+                    ),
+                    color: getThemeColor(
+                      themeProps.buttons.error.contained.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Error
@@ -408,9 +626,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <button
                   className="px-4 py-2 rounded"
                   style={{
-                    backgroundColor:
+                    backgroundColor: getThemeColor(
                       themeProps.buttons.muted.contained.background,
-                    color: themeProps.buttons.muted.contained.text,
+                      theme.palette
+                    ),
+                    color: getThemeColor(
+                      themeProps.buttons.muted.contained.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Muted
@@ -418,9 +641,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                 <button
                   className="px-4 py-2 rounded"
                   style={{
-                    backgroundColor:
+                    backgroundColor: getThemeColor(
                       themeProps.buttons.disabled.contained.background,
-                    color: themeProps.buttons.disabled.contained.text,
+                      theme.palette
+                    ),
+                    color: getThemeColor(
+                      themeProps.buttons.disabled.contained.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Disabled
@@ -432,7 +660,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
             <div className="mb-4">
               <h3
                 className="text-lg mb-2"
-                style={{ color: themeProps.text.primary }}
+                style={{
+                  color: getThemeColor(themeProps.text.primary, theme.palette),
+                }}
               >
                 Outlined
               </h3>
@@ -441,8 +671,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.primary.outlined.text,
-                    border: `1px solid ${themeProps.buttons.primary.outlined.border}`,
+                    color: getThemeColor(
+                      themeProps.buttons.primary.outlined.text,
+                      theme.palette
+                    ),
+                    border: `1px solid ${getThemeColor(
+                      themeProps.buttons.primary.outlined.border,
+                      theme.palette
+                    )}`,
                   }}
                 >
                   Primary
@@ -451,8 +687,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.secondary.outlined.text,
-                    border: `1px solid ${themeProps.buttons.secondary.outlined.border}`,
+                    color: getThemeColor(
+                      themeProps.buttons.secondary.outlined.text,
+                      theme.palette
+                    ),
+                    border: `1px solid ${getThemeColor(
+                      themeProps.buttons.secondary.outlined.border,
+                      theme.palette
+                    )}`,
                   }}
                 >
                   Secondary
@@ -461,8 +703,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.error.outlined.text,
-                    border: `1px solid ${themeProps.buttons.error.outlined.border}`,
+                    color: getThemeColor(
+                      themeProps.buttons.error.outlined.text,
+                      theme.palette
+                    ),
+                    border: `1px solid ${getThemeColor(
+                      themeProps.buttons.error.outlined.border,
+                      theme.palette
+                    )}`,
                   }}
                 >
                   Error
@@ -471,8 +719,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.muted.outlined.text,
-                    border: `1px solid ${themeProps.buttons.muted.outlined.border}`,
+                    color: getThemeColor(
+                      themeProps.buttons.muted.outlined.text,
+                      theme.palette
+                    ),
+                    border: `1px solid ${getThemeColor(
+                      themeProps.buttons.muted.outlined.border,
+                      theme.palette
+                    )}`,
                   }}
                 >
                   Muted
@@ -481,8 +735,14 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.disabled.outlined.text,
-                    border: `1px solid ${themeProps.buttons.disabled.outlined.border}`,
+                    color: getThemeColor(
+                      themeProps.buttons.disabled.outlined.text,
+                      theme.palette
+                    ),
+                    border: `1px solid ${getThemeColor(
+                      themeProps.buttons.disabled.outlined.border,
+                      theme.palette
+                    )}`,
                   }}
                 >
                   Disabled
@@ -494,7 +754,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
             <div>
               <h3
                 className="text-lg mb-2"
-                style={{ color: themeProps.text.primary }}
+                style={{
+                  color: getThemeColor(themeProps.text.primary, theme.palette),
+                }}
               >
                 Text
               </h3>
@@ -503,7 +765,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.primary.text.text,
+                    color: getThemeColor(
+                      themeProps.buttons.primary.text.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Primary
@@ -512,7 +777,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.secondary.text.text,
+                    color: getThemeColor(
+                      themeProps.buttons.secondary.text.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Secondary
@@ -521,7 +789,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.error.text.text,
+                    color: getThemeColor(
+                      themeProps.buttons.error.text.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Error
@@ -530,7 +801,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.muted.text.text,
+                    color: getThemeColor(
+                      themeProps.buttons.muted.text.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Muted
@@ -539,7 +813,10 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
                   className="px-4 py-2 rounded"
                   style={{
                     backgroundColor: 'transparent',
-                    color: themeProps.buttons.disabled.text.text,
+                    color: getThemeColor(
+                      themeProps.buttons.disabled.text.text,
+                      theme.palette
+                    ),
                   }}
                 >
                   Disabled
@@ -552,7 +829,9 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
           <div>
             <h2
               className="text-xl font-semibold mb-2"
-              style={{ color: themeProps.text.primary }}
+              style={{
+                color: getThemeColor(themeProps.text.primary, theme.palette),
+              }}
             >
               Палітра кольорів
             </h2>

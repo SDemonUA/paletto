@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ROUTES } from './constants'
+import { ROUTES } from '../constants'
 
 export default function WelcomePage() {
   return (

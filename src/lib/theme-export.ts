@@ -1,51 +1,108 @@
-import { UITheme } from './theme-utils';
+import { UITheme, getThemeColor } from './theme-utils'
 
 /**
  * Створює конфігурацію теми для shadcn/ui
  */
 export function createShadcnConfig(theme: UITheme): string {
   // Значення за замовчуванням у пікселях
-  const defaultRadius = 8;
-  const defaultSpacing = 8;
+  const defaultRadius = 8
+  const defaultSpacing = 8
 
   return `// tailwind.config.js
 module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '${theme.themeProps.background.default}',
-        foreground: '${theme.themeProps.text.primary}',
+        background: '${getThemeColor(
+          theme.themeProps.background.default,
+          theme.palette
+        )}',
+        foreground: '${getThemeColor(
+          theme.themeProps.text.primary,
+          theme.palette
+        )}',
         primary: {
-          DEFAULT: '${theme.themeProps.buttons.primary.contained.background}',
-          foreground: '${theme.themeProps.buttons.primary.contained.text}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.buttons.primary.contained.background,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.buttons.primary.contained.text,
+            theme.palette
+          )}',
         },
         secondary: {
-          DEFAULT: '${theme.themeProps.buttons.secondary.contained.background}',
-          foreground: '${theme.themeProps.buttons.secondary.contained.text}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.buttons.secondary.contained.background,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.buttons.secondary.contained.text,
+            theme.palette
+          )}',
         },
         destructive: {
-          DEFAULT: '${theme.themeProps.buttons.error.contained.background}',
-          foreground: '${theme.themeProps.buttons.error.contained.text}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.buttons.error.contained.background,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.buttons.error.contained.text,
+            theme.palette
+          )}',
         },
         muted: {
-          DEFAULT: '${theme.themeProps.background.component}',
-          foreground: '${theme.themeProps.text.secondary}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.background.component,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.text.secondary,
+            theme.palette
+          )}',
         },
         accent: {
-          DEFAULT: '${theme.themeProps.background.component}',
-          foreground: '${theme.themeProps.text.primary}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.background.component,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.text.primary,
+            theme.palette
+          )}',
         },
         card: {
-          DEFAULT: '${theme.themeProps.background.paper}',
-          foreground: '${theme.themeProps.text.primary}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.background.paper,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.text.primary,
+            theme.palette
+          )}',
         },
         popover: {
-          DEFAULT: '${theme.themeProps.background.paper}',
-          foreground: '${theme.themeProps.text.primary}',
+          DEFAULT: '${getThemeColor(
+            theme.themeProps.background.paper,
+            theme.palette
+          )}',
+          foreground: '${getThemeColor(
+            theme.themeProps.text.primary,
+            theme.palette
+          )}',
         },
-        border: '${theme.themeProps.buttons.muted.outlined.border}',
-        input: '${theme.themeProps.buttons.muted.outlined.border}',
-        ring: '${theme.themeProps.buttons.primary.contained.background}',
+        border: '${getThemeColor(
+          theme.themeProps.buttons.muted.outlined.border,
+          theme.palette
+        )}',
+        input: '${getThemeColor(
+          theme.themeProps.buttons.muted.outlined.border,
+          theme.palette
+        )}',
+        ring: '${getThemeColor(
+          theme.themeProps.buttons.primary.contained.background,
+          theme.palette
+        )}',
       },
       borderRadius: {
         DEFAULT: '${theme.rounding || defaultRadius}px',
@@ -55,7 +112,84 @@ module.exports = {
       },
     },
   },
-}`;
+}`
+}
+
+// Ця функція створює конфігурацію теми для shadcn/ui global.css
+export function createShadcnCssVarsConfig(theme: UITheme): string {
+  return `:root {
+  --background: ${getThemeColor(
+    theme.themeProps.background.default,
+    theme.palette
+  )};
+  --foreground: ${getThemeColor(theme.themeProps.text.primary, theme.palette)};
+  --primary: ${getThemeColor(
+    theme.themeProps.buttons.primary.contained.background,
+    theme.palette
+  )};
+  --primary-foreground: ${getThemeColor(
+    theme.themeProps.buttons.primary.contained.text,
+    theme.palette
+  )};
+  --secondary: ${getThemeColor(
+    theme.themeProps.buttons.secondary.contained.background,
+    theme.palette
+  )};
+  --secondary-foreground: ${getThemeColor(
+    theme.themeProps.buttons.secondary.contained.text,
+    theme.palette
+  )};
+  --destructive: ${getThemeColor(
+    theme.themeProps.buttons.error.contained.background,
+    theme.palette
+  )};
+  --destructive-foreground: ${getThemeColor(
+    theme.themeProps.buttons.error.contained.text,
+    theme.palette
+  )};
+  --muted: ${getThemeColor(
+    theme.themeProps.background.component,
+    theme.palette
+  )};
+  --muted-foreground: ${getThemeColor(
+    theme.themeProps.text.secondary,
+    theme.palette
+  )};
+  --accent: ${getThemeColor(
+    theme.themeProps.background.component,
+    theme.palette
+  )};
+  --accent-foreground: ${getThemeColor(
+    theme.themeProps.text.primary,
+    theme.palette
+  )};
+  --card: ${getThemeColor(theme.themeProps.background.paper, theme.palette)};
+  --card-foreground: ${getThemeColor(
+    theme.themeProps.text.primary,
+    theme.palette
+  )};
+  --popover: ${getThemeColor(theme.themeProps.background.paper, theme.palette)};
+  --popover-foreground: ${getThemeColor(
+    theme.themeProps.text.primary,
+    theme.palette
+  )};
+  --border: ${getThemeColor(
+    theme.themeProps.buttons.muted.outlined.border,
+    theme.palette
+  )};
+  --input: ${getThemeColor(
+    theme.themeProps.buttons.muted.outlined.border,
+    theme.palette
+  )};
+  --ring: ${getThemeColor(
+    theme.themeProps.buttons.primary.contained.background,
+    theme.palette
+  )};
+  --radius: ${theme.rounding}px;
+  --spacing: ${theme.spacing}px;
+
+  font-size: ${theme.fontSize}px;
+  }`
 }
 
 /**
@@ -63,49 +197,93 @@ module.exports = {
  */
 export function createMuiConfig(theme: UITheme): string {
   // Значення за замовчуванням у пікселях
-  const defaultRadius = 4;
-  const defaultSpacing = 8;
+  const defaultRadius = 4
+  const defaultSpacing = 8
 
   return `// theme.js
 import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
-    mode: '${theme.settings.isDarkMode ? 'dark' : 'light'}',
+    mode: '${theme.isDarkMode ? 'dark' : 'light'}',
     background: {
-      default: '${theme.themeProps.background.default}',
-      paper: '${theme.themeProps.background.paper}',
+      default: '${getThemeColor(
+        theme.themeProps.background.default,
+        theme.palette
+      )}',
+      paper: '${getThemeColor(
+        theme.themeProps.background.paper,
+        theme.palette
+      )}',
     },
     text: {
-      primary: '${theme.themeProps.text.primary}',
-      secondary: '${theme.themeProps.text.secondary}',
-      disabled: '${theme.themeProps.text.disabled}',
+      primary: '${getThemeColor(theme.themeProps.text.primary, theme.palette)}',
+      secondary: '${getThemeColor(
+        theme.themeProps.text.secondary,
+        theme.palette
+      )}',
+      disabled: '${getThemeColor(
+        theme.themeProps.text.disabled,
+        theme.palette
+      )}',
     },
     primary: {
-      main: '${theme.themeProps.buttons.primary.contained.background}',
-      contrastText: '${theme.themeProps.buttons.primary.contained.text}',
+      main: '${getThemeColor(
+        theme.themeProps.buttons.primary.contained.background,
+        theme.palette
+      )}',
+      contrastText: '${getThemeColor(
+        theme.themeProps.buttons.primary.contained.text,
+        theme.palette
+      )}',
     },
     secondary: {
-      main: '${theme.themeProps.buttons.secondary.contained.background}',
-      contrastText: '${theme.themeProps.buttons.secondary.contained.text}',
+      main: '${getThemeColor(
+        theme.themeProps.buttons.secondary.contained.background,
+        theme.palette
+      )}',
+      contrastText: '${getThemeColor(
+        theme.themeProps.buttons.secondary.contained.text,
+        theme.palette
+      )}',
     },
     error: {
-      main: '${theme.themeProps.buttons.error.contained.background}',
-      contrastText: '${theme.themeProps.buttons.error.contained.text}',
+      main: '${getThemeColor(
+        theme.themeProps.buttons.error.contained.background,
+        theme.palette
+      )}',
+      contrastText: '${getThemeColor(
+        theme.themeProps.buttons.error.contained.text,
+        theme.palette
+      )}',
     },
     action: {
-      active: '${theme.themeProps.buttons.primary.contained.background}',
-      hover: '${theme.themeProps.buttons.primary.contained.background}20',
-      disabled: '${theme.themeProps.buttons.disabled.contained.background}',
-      disabledBackground: '${theme.themeProps.buttons.disabled.contained.background}',
+      active: '${getThemeColor(
+        theme.themeProps.buttons.primary.contained.background,
+        theme.palette
+      )}',
+      hover: '${getThemeColor(
+        theme.themeProps.buttons.primary.contained.background,
+        theme.palette
+      )}20',
+      disabled: '${getThemeColor(
+        theme.themeProps.buttons.disabled.contained.background,
+        theme.palette
+      )}',
+      disabledBackground: '${
+        theme.themeProps.buttons.disabled.contained.background
+      }',
     },
-    divider: '${theme.themeProps.buttons.muted.outlined.border}',
+    divider: '${getThemeColor(
+      theme.themeProps.buttons.muted.outlined.border,
+      theme.palette
+    )}',
   },
   shape: {
     borderRadius: ${theme.rounding || defaultRadius},
   },
   spacing: ${theme.spacing || defaultSpacing},
-});`;
+});`
 }
 
 /**
@@ -113,8 +291,8 @@ export const theme = createTheme({
  */
 export function createHeroConfig(theme: UITheme): string {
   // Значення за замовчуванням у пікселях
-  const defaultRadius = 8;
-  const defaultSpacing = 8;
+  const defaultRadius = 8
+  const defaultSpacing = 8
 
   return `// tailwind.config.js
 const colors = require('tailwindcss/colors')
@@ -123,15 +301,42 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '${theme.themeProps.buttons.primary.contained.background}',
-        secondary: '${theme.themeProps.buttons.secondary.contained.background}',
-        background: '${theme.themeProps.background.default}',
-        error: '${theme.themeProps.buttons.error.contained.background}',
-        surface: '${theme.themeProps.background.paper}',
-        'on-surface': '${theme.themeProps.text.primary}',
-        'on-primary': '${theme.themeProps.buttons.primary.contained.text}',
-        'on-secondary': '${theme.themeProps.buttons.secondary.contained.text}',
-        'on-error': '${theme.themeProps.buttons.error.contained.text}',
+        primary: '${getThemeColor(
+          theme.themeProps.buttons.primary.contained.background,
+          theme.palette
+        )}',
+        secondary: '${getThemeColor(
+          theme.themeProps.buttons.secondary.contained.background,
+          theme.palette
+        )}',
+        background: '${getThemeColor(
+          theme.themeProps.background.default,
+          theme.palette
+        )}',
+        error: '${getThemeColor(
+          theme.themeProps.buttons.error.contained.background,
+          theme.palette
+        )}',
+        surface: '${getThemeColor(
+          theme.themeProps.background.paper,
+          theme.palette
+        )}',
+        'on-surface': '${getThemeColor(
+          theme.themeProps.text.primary,
+          theme.palette
+        )}',
+        'on-primary': '${getThemeColor(
+          theme.themeProps.buttons.primary.contained.text,
+          theme.palette
+        )}',
+        'on-secondary': '${getThemeColor(
+          theme.themeProps.buttons.secondary.contained.text,
+          theme.palette
+        )}',
+        'on-error': '${getThemeColor(
+          theme.themeProps.buttons.error.contained.text,
+          theme.palette
+        )}',
       },
       borderRadius: {
         DEFAULT: '${theme.rounding || defaultRadius}px',
@@ -141,5 +346,5 @@ module.exports = {
       },
     },
   },
-}`;
-} 
+}`
+}

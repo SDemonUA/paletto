@@ -27,17 +27,20 @@ export default function Header() {
           </Link>
         </div>
 
-        <select
-          value={colorFormat}
-          onChange={(e) =>
-            setColorFormat(e.target.value as 'hex' | 'rgb' | 'hsl')
-          }
-          className="px-3 py-1 border rounded-md bg-white"
-        >
-          <option value="hex">HEX</option>
-          <option value="rgb">RGB</option>
-          <option value="hsl">HSL</option>
-        </select>
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium">Color Format</label>
+          <select
+            value={colorFormat}
+            onChange={(e) =>
+              setColorFormat(e.target.value as 'hex' | 'rgb' | 'hsl')
+            }
+            className="px-3 py-1 border rounded-md bg-white"
+          >
+            <option value="hex">HEX</option>
+            <option value="rgb">RGB</option>
+            <option value="hsl">HSL</option>
+          </select>
+        </div>
       </div>
     </header>
   )

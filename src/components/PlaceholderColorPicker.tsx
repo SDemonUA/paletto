@@ -1,112 +1,62 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { ColorPalette } from '@/lib/palette-utils';
-import { PlaceholderSettings } from '@/lib/theme-utils';
+import { useState } from 'react'
+import { ColorPalette } from '@/lib/palette-utils'
+import { ColorLink, getThemeColor, ThemeColor } from '@/lib/theme-utils'
 
 interface PlaceholderColorPickerProps {
-  label: string;
-  palette: ColorPalette;
-  settings: PlaceholderSettings;
-  onChange: (settings: PlaceholderSettings) => void;
+  label: string
+  palette: ColorPalette
+  value: ThemeColor
+  defaultValue: ThemeColor
+  onChange: (settings: ThemeColor) => void
 }
 
 export default function PlaceholderColorPicker({
   label,
   palette,
-  settings,
-  onChange
+  value,
+  defaultValue,
+  onChange,
 }: PlaceholderColorPickerProps) {
-  const [manualColor, setManualColor] = useState<string>(settings.manualColor || '#ffffff');
-  const [saturation, setSaturation] = useState<number>(settings.saturation || 100);
-  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  const manualColor = typeof value === 'string' ? value : ''
+  const { paletteId, adjustmets } =
+    typeof value === 'string' ? { paletteId: '', adjustmets: {} } : value
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false)
 
-  // Синхронізуємо стан з налаштуваннями
-  useEffect(() => {
-    if (settings.manualColor) {
-      setManualColor(settings.manualColor);
-    }
-    if (settings.saturation) {
-      setSaturation(settings.saturation);
-    }
-  }, [settings]);
+  const getDisplayColor = () => getThemeColor(value, palette)
 
-  // Отримуємо колір для відображення
-  const getDisplayColor = () => {
-    if (settings.useDefault) {
-      return '#cccccc'; // Placeholder для кольору за замовчуванням
-    }
-    
-    if (settings.manualColor) {
-      return settings.manualColor;
-    }
-    
-    if (settings.colorId) {
-      const colorEntry = palette.colors.find(c => c.id === settings.colorId);
-      if (colorEntry) {
-        if (settings.saturation !== undefined && settings.saturation !== 100) {
-          try {
-            const adjustedColor = colorEntry.color.clone();
-            adjustedColor.set('lch.c', adjustedColor.get('lch.c') * (settings.saturation / 100));
-            return adjustedColor.toString({format: 'hex'});
-          } catch {
-            return colorEntry.color.toString({format: 'hex'});
-          }
-        }
-        return colorEntry.color.toString({format: 'hex'});
-      }
-    }
-    
-    return '#cccccc';
-  };
-
-  // Обробник вибору кольору з палітри
-  const handleColorSelect = (colorId: string) => {
+  const handleColorSelect = (paletteId: string) => {
     onChange({
-      ...settings,
-      useDefault: false,
-      colorId,
-      manualColor: undefined
-    });
-  };
+      paletteId,
+      adjustmets,
+    })
+  }
 
-  // Обробник вибору кольору за замовчуванням
-  const handleDefaultSelect = () => {
-    onChange({
-      useDefault: true,
-      colorId: undefined,
-      manualColor: undefined,
-      saturation: 100
-    });
-  };
+  const handleDefaultSelect = () => onChange(defaultValue)
 
-  // Обробник зміни насиченості
-  const handleSaturationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newSaturation = parseInt(e.target.value);
-    setSaturation(newSaturation);
-    onChange({
-      ...settings,
-      saturation: newSaturation
-    });
-  };
+  const getAdjustmentHandler =
+    (adjustment: keyof ColorLink['adjustmets']) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(e.target.value)
+      onChange({
+        paletteId,
+        adjustmets: {
+          ...adjustmets,
+          [adjustment]: value,
+        },
+      })
+    }
 
-  // Обробник ручного вибору кольору
   const handleManualColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = e.target.value;
-    setManualColor(newColor);
-    onChange({
-      useDefault: false,
-      colorId: undefined,
-      manualColor: newColor,
-      saturation: settings.saturation
-    });
-  };
+    onChange(e.target.value)
+  }
 
   return (
     <div className="mb-4">
       <div className="flex items-center justify-between mb-2">
         <label className="block text-sm font-medium">{label}</label>
-        <button 
+        <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="text-xs text-blue-500 hover:text-blue-700"
@@ -114,26 +64,26 @@ export default function PlaceholderColorPicker({
           {showAdvanced ? 'Сховати розширені' : 'Розширені налаштування'}
         </button>
       </div>
-      
+
       <div className="flex items-center mb-2">
-        <div 
-          className="w-8 h-8 rounded border mr-2" 
+        <div
+          className="w-8 h-8 rounded border mr-2"
           style={{ backgroundColor: getDisplayColor() }}
         />
-        
+
         <button
           type="button"
           onClick={handleDefaultSelect}
           className={`px-3 py-1 text-sm rounded mr-2 ${
-            settings.useDefault 
-              ? 'bg-blue-500 text-white' 
+            manualColor === defaultValue
+              ? 'bg-blue-500 text-white'
               : 'bg-gray-200 hover:bg-gray-300'
           }`}
         >
           За замовчуванням
         </button>
       </div>
-      
+
       {showAdvanced && (
         <div className="mt-2 p-3 bg-gray-50 rounded">
           <div className="mb-3">
@@ -145,24 +95,52 @@ export default function PlaceholderColorPicker({
               className="w-full h-8 cursor-pointer"
             />
           </div>
-          
+
           <div className="mb-2">
             <label className="block text-sm mb-1">
-              Насиченість: {saturation}%
+              Прозорість: {adjustmets.alpha}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={adjustmets.alpha}
+              onChange={getAdjustmentHandler('alpha')}
+              className="w-full"
+              disabled={!!manualColor}
+            />
+          </div>
+          <div className="mb-2">
+            <label className="block text-sm mb-1">
+              Насиченість: {adjustmets.saturation}%
             </label>
             <input
               type="range"
               min="0"
               max="200"
-              value={saturation}
-              onChange={handleSaturationChange}
+              value={adjustmets.saturation}
+              onChange={getAdjustmentHandler('saturation')}
               className="w-full"
-              disabled={settings.useDefault || !!settings.manualColor}
+              disabled={!!manualColor}
+            />
+          </div>
+          <div className="mb-2">
+            <label className="block text-sm mb-1">
+              Яскравість: {adjustmets.lightness}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="200"
+              value={adjustmets.lightness}
+              onChange={getAdjustmentHandler('lightness')}
+              className="w-full"
+              disabled={!!manualColor}
             />
           </div>
         </div>
       )}
-      
+
       <div className="mt-3">
         <div className="text-sm mb-1">Вибрати з палітри:</div>
         <div className="grid grid-cols-5 gap-2">
@@ -171,12 +149,10 @@ export default function PlaceholderColorPicker({
               key={color.id}
               type="button"
               className={`w-full h-8 rounded border ${
-                settings.colorId === color.id && !settings.useDefault && !settings.manualColor
-                  ? 'ring-2 ring-blue-500'
-                  : ''
+                paletteId === color.id ? 'ring-2 ring-blue-500' : ''
               }`}
-              style={{ 
-                backgroundColor: color.color.toString({format: 'hex'})
+              style={{
+                backgroundColor: color.color.toString({ format: 'hex' }),
               }}
               onClick={() => handleColorSelect(color.id)}
             />
@@ -184,5 +160,5 @@ export default function PlaceholderColorPicker({
         </div>
       </div>
     </div>
-  );
-} 
+  )
+}

@@ -12,12 +12,7 @@ import {
   PaletteStrategy,
   ColorPalette,
 } from '@/lib/palette-utils'
-import {
-  createThemeFromPalette,
-  UITheme,
-  PlaceholderSettings,
-  ThemeSettings,
-} from '@/lib/theme-utils'
+import { createThemeFromPalette, ThemeColor, UITheme } from '@/lib/theme-utils'
 import Color from 'colorjs.io'
 import { serializeWithColor } from '@/lib/utils'
 
@@ -37,13 +32,15 @@ export default function Step1() {
     if (baseColor && strategy) {
       const newPalette = createPalette(baseColor, strategy)
 
-      const settings: ThemeSettings = {
+      const settings: Pick<
+        UITheme,
+        'isDarkMode' | 'contrastLevel' | 'fontSize' | 'rounding' | 'spacing'
+      > = {
         isDarkMode: false,
         contrastLevel: 3,
-        placeholders: {
-          background: { useDefault: true },
-          text: { useDefault: true },
-        },
+        fontSize: 16,
+        rounding: 4,
+        spacing: 8,
       }
 
       const newTheme = createThemeFromPalette(newPalette, settings)
@@ -68,7 +65,7 @@ export default function Step1() {
       setPalette(newPalette)
 
       if (theme) {
-        const newTheme = createThemeFromPalette(newPalette, theme.settings)
+        const newTheme = createThemeFromPalette(newPalette, theme)
         setTheme(newTheme)
       }
     }
@@ -91,22 +88,19 @@ export default function Step1() {
     setBaseColor(randomColor)
   }
 
-  // Обробник для зміни налаштувань плейсхолдера
   const handlePlaceholderChange = (
     placeholder: 'background' | 'text',
-    settings: PlaceholderSettings
+    color: ThemeColor
   ) => {
-    if (theme && palette) {
-      const updatedSettings = {
-        ...theme.settings,
-        placeholders: {
-          ...theme.settings.placeholders,
-          [placeholder]: settings,
-        },
+    if (theme) {
+      const newTheme = { ...theme }
+      if (placeholder === 'background') {
+        newTheme.themeProps.background.default = color
+      } else if (placeholder === 'text') {
+        newTheme.themeProps.text.primary = color
       }
 
-      const updatedTheme = createThemeFromPalette(palette, updatedSettings)
-      setTheme(updatedTheme)
+      setTheme(newTheme)
     }
   }
 
@@ -178,17 +172,21 @@ export default function Step1() {
             <PlaceholderColorPicker
               label="Фон"
               palette={palette}
-              settings={theme.settings.placeholders.background}
-              onChange={(settings) =>
-                handlePlaceholderChange('background', settings)
+              value={theme.themeProps.background.default}
+              defaultValue={'#ffffff'}
+              onChange={(color: ThemeColor) =>
+                handlePlaceholderChange('background', color)
               }
             />
 
             <PlaceholderColorPicker
               label="Текст"
               palette={palette}
-              settings={theme.settings.placeholders.text}
-              onChange={(settings) => handlePlaceholderChange('text', settings)}
+              value={theme.themeProps.text.primary}
+              defaultValue={'#000000'}
+              onChange={(color: ThemeColor) =>
+                handlePlaceholderChange('text', color)
+              }
             />
           </div>
 

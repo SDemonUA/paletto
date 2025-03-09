@@ -2,14 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import {
-  createThemeFromPalette,
-  UITheme,
-  PlaceholderSettings,
-} from '@/lib/theme-utils'
+import { createThemeFromPalette, UITheme } from '@/lib/theme-utils'
 import { createPalette, PaletteStrategy } from '@/lib/palette-utils'
 import ThemePreview from '@/components/ThemePreview'
-import PlaceholderColorPicker from '@/components/PlaceholderColorPicker'
 import ContrastLevelPicker from '@/components/ContrastLevelPicker'
 import Color from 'colorjs.io'
 import { deserializeWithColor, serializeWithColor } from '@/lib/utils'
@@ -18,7 +13,7 @@ function Step2Content() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [theme, setTheme] = useState<UITheme | null>(null)
-  const [isDarkMode, setIsDarkMode] = useState(false)
+  const isDarkMode = theme?.isDarkMode || false
 
   // Ініціалізація теми при першому рендері
   useEffect(() => {
@@ -30,7 +25,6 @@ function Step2Content() {
       try {
         const savedTheme = deserializeWithColor(themeData) as UITheme
         setTheme(savedTheme)
-        setIsDarkMode(savedTheme.settings.isDarkMode)
         return
       } catch (e) {
         console.error('Помилка при завантаженні теми з URL:', e)
@@ -45,10 +39,6 @@ function Step2Content() {
     const initialTheme = createThemeFromPalette(palette, {
       isDarkMode: false,
       contrastLevel: 3,
-      placeholders: {
-        background: { useDefault: true },
-        text: { useDefault: true },
-      },
     })
 
     setTheme(initialTheme)
@@ -58,43 +48,19 @@ function Step2Content() {
   const toggleDarkMode = () => {
     if (!theme) return
 
-    const newIsDarkMode = !isDarkMode
-    setIsDarkMode(newIsDarkMode)
-
-    // Оновлюємо тему з новим налаштуванням темного режиму
     const updatedTheme = createThemeFromPalette(theme.palette, {
-      ...theme.settings,
-      isDarkMode: newIsDarkMode,
+      ...theme,
+      isDarkMode: !isDarkMode,
     })
 
     setTheme(updatedTheme)
   }
 
-  // Функція для оновлення налаштувань плейсхолдера
-  const updatePlaceholderSettings = (
-    placeholder: 'background' | 'text',
-    settings: PlaceholderSettings
-  ) => {
-    if (!theme) return
-
-    const updatedSettings = {
-      ...theme.settings,
-      placeholders: {
-        ...theme.settings.placeholders,
-        [placeholder]: settings,
-      },
-    }
-
-    const updatedTheme = createThemeFromPalette(theme.palette, updatedSettings)
-    setTheme(updatedTheme)
-  }
-
-  // Функція для оновлення рівня контрасту
   const updateContrastLevel = (contrastLevel: number) => {
     if (!theme) return
 
     const updatedSettings = {
-      ...theme.settings,
+      ...theme,
       contrastLevel,
     }
 
@@ -156,39 +122,9 @@ function Step2Content() {
 
             {/* Налаштування контрасту */}
             <ContrastLevelPicker
-              value={theme.settings.contrastLevel}
+              value={theme.contrastLevel}
               onChange={updateContrastLevel}
             />
-          </div>
-
-          <div className="p-4 border rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">
-              Кольори плейсхолдерів
-            </h3>
-
-            {/* Вибір кольору фону */}
-            <div className="mb-6">
-              <PlaceholderColorPicker
-                label="Фон"
-                palette={theme.palette}
-                settings={theme.settings.placeholders.background}
-                onChange={(settings) =>
-                  updatePlaceholderSettings('background', settings)
-                }
-              />
-            </div>
-
-            {/* Вибір кольору тексту */}
-            <div className="mb-6">
-              <PlaceholderColorPicker
-                label="Текст"
-                palette={theme.palette}
-                settings={theme.settings.placeholders.text}
-                onChange={(settings) =>
-                  updatePlaceholderSettings('text', settings)
-                }
-              />
-            </div>
           </div>
 
           <div className="p-4 border rounded-lg">

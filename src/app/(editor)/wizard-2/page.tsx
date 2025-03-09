@@ -6,10 +6,9 @@ import {
   createColor,
   generatePaletteColors,
   getContrastTextColor,
+  getColorName,
 } from '@/lib/color-utils'
 import Color from 'colorjs.io'
-import nearestColor from 'nearest-color'
-import { colornames } from 'color-name-list'
 import { useRouter } from 'next/navigation'
 import { createThemeFromPalette } from '@/lib/theme-utils'
 import {
@@ -17,17 +16,6 @@ import {
   PaletteStrategy,
 } from '@/lib/palette-utils'
 import { generateUUID, serializeWithColor } from '@/lib/utils'
-
-// Create a dictionary of named colors
-const colors = colornames.reduce(
-  (o, { name, hex }) => Object.assign(o, { [name]: hex }),
-  {}
-)
-const nearest = nearestColor.from(colors)
-
-const getColorName = (color: string) => {
-  return nearest(color)?.name
-}
 
 export default function Wizard2() {
   const router = useRouter()
@@ -189,10 +177,6 @@ export default function Wizard2() {
             const theme = createThemeFromPalette(palette, {
               isDarkMode: isDarkTheme,
               contrastLevel: 4.5,
-              placeholders: {
-                background: { useDefault: true },
-                text: { useDefault: true },
-              },
             })
 
             // Серіалізуємо тему в URL

@@ -8,7 +8,7 @@ import {
   useEffect,
 } from 'react'
 
-type ColorFormat = 'hex' | 'rgb' | 'hsl'
+export type ColorFormat = 'hex' | 'rgb' | 'hsl'
 
 interface PreferencesContextType {
   colorFormat: ColorFormat

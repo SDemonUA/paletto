@@ -1,116 +1,111 @@
-'use client';
+'use client'
 
-import Color from 'colorjs.io';
-import { ColorPalette } from '@/lib/palette-utils';
-import { generateUUID } from './uuid-utils';
+import Color from 'colorjs.io'
+import { get } from 'lodash'
+import { ColorPalette } from '@/lib/palette-utils'
+import { generateUUID } from './uuid-utils'
 
-// Інтерфейс для налаштувань плейсхолдера
-export interface PlaceholderSettings {
-  useDefault: boolean;
-  colorId?: string;
-  manualColor?: string;
-  saturation?: number;
+// Дозволяє використати в темі колір з палітри з/без змін
+export interface ColorLink {
+  paletteId: string
+  adjustmets: {
+    alpha?: number // 0-1
+    lightness?: number // -100-100
+    saturation?: number // -100-100
+  }
 }
 
-// Інтерфейс для налаштувань теми
-export interface ThemeSettings {
-  isDarkMode: boolean;
-  contrastLevel: number;
-  placeholders: {
-    background: PlaceholderSettings;
-    text: PlaceholderSettings;
-  };
-}
+export type ThemeColor = string | ColorLink
 
-// Інтерфейс для UI теми
 export interface UITheme {
-  id: string;
-  palette: ColorPalette;
-  settings: ThemeSettings;
-  rounding?: number;
-  spacing?: number;
-  fontSize?: number;
+  id: string
+  rounding: number
+  spacing: number
+  fontSize: number
+  isDarkMode: boolean
+  contrastLevel: number
+
+  palette: ColorPalette
+
   themeProps: {
     background: {
-      default: string;
-      paper: string;
-      component: string;
-    };
+      default: ThemeColor
+      paper: ThemeColor
+      component: ThemeColor
+    }
     text: {
-      primary: string;
-      secondary: string;
-      disabled: string;
-    };
-    alerts: {
-      info: { background: string; text: string };
-      success: { background: string; text: string };
-      warning: { background: string; text: string };
-      error: { background: string; text: string };
-    };
-    buttons: {
-      primary: { 
-        contained: { background: string; text: string };
-        outlined: { border: string; text: string };
-        text: { text: string };
-      };
-      secondary: { 
-        contained: { background: string; text: string };
-        outlined: { border: string; text: string };
-        text: { text: string };
-      };
-      error: { 
-        contained: { background: string; text: string };
-        outlined: { border: string; text: string };
-        text: { text: string };
-      };
-      muted: { 
-        contained: { background: string; text: string };
-        outlined: { border: string; text: string };
-        text: { text: string };
-      };
-      disabled: { 
-        contained: { background: string; text: string };
-        outlined: { border: string; text: string };
-        text: { text: string };
-      };
-    };
-  };
-}
+      primary: ThemeColor
+      secondary: ThemeColor
+      disabled: ThemeColor
+    }
+    success: { text: ThemeColor; background: ThemeColor }
+    info: { text: ThemeColor; background: ThemeColor }
+    warning: { text: ThemeColor; background: ThemeColor }
+    error: { text: ThemeColor; background: ThemeColor }
 
-/**
- * Отримує колір з налаштувань плейсхолдера
- */
-export function getColorFromPlaceholderSettings(
-  settings: PlaceholderSettings,
-  palette: ColorPalette,
-  defaultColor: string
-): string {
-  // Якщо використовуємо значення за замовчуванням
-  if (settings.useDefault) {
-    return defaultColor;
-  }
-  
-  // Якщо вказано ручний колір
-  if (settings.manualColor) {
-    return settings.manualColor;
-  }
-  
-  // Якщо вказано ID кольору з палітри
-  if (settings.colorId) {
-    const colorEntry = palette.colors.find(c => c.id === settings.colorId);
-    if (colorEntry) {
-      // Якщо вказано насиченість, змінюємо її
-      if (settings.saturation !== undefined && settings.saturation !== 100) {
-        const adjustedColor = colorEntry.color.clone();
-        adjustedColor.set('lch.c', adjustedColor.get('lch.c') * (settings.saturation / 100));
-        return adjustedColor.toString({format: 'hex'});
+    buttons: {
+      primary: {
+        contained: { background: ThemeColor; text: ThemeColor }
+        outlined: { border: ThemeColor; text: ThemeColor }
+        text: { text: ThemeColor }
       }
-      return colorEntry.color.toString({format: 'hex'});
+      secondary: {
+        contained: { background: ThemeColor; text: ThemeColor }
+        outlined: { border: ThemeColor; text: ThemeColor }
+        text: { text: ThemeColor }
+      }
+      error: {
+        contained: { background: ThemeColor; text: ThemeColor }
+        outlined: { border: ThemeColor; text: ThemeColor }
+        text: { text: ThemeColor }
+      }
+      muted: {
+        contained: { background: ThemeColor; text: ThemeColor }
+        outlined: { border: ThemeColor; text: ThemeColor }
+        text: { text: ThemeColor }
+      }
+      disabled: {
+        contained: { background: ThemeColor; text: ThemeColor }
+        outlined: { border: ThemeColor; text: ThemeColor }
+        text: { text: ThemeColor }
+      }
     }
   }
-  
-  // Якщо нічого не знайдено, повертаємо значення за замовчуванням
-  return defaultColor;
+}
+
+export function getThemeColor(
+  color: ThemeColor,
+  palette: ColorPalette
+): string {
+  if (typeof color === 'string') {
+    return color
+  }
+
+  const colorEntry = palette.colors.find((c) => c.id === color.paletteId)
+  if (!colorEntry) {
+    return '#000000'
+  }
+
+  const colorObj = colorEntry.color.clone()
+  if (color.adjustmets.alpha !== undefined) {
+    colorObj.set('alpha', color.adjustmets.alpha)
+  }
+
+  if (color.adjustmets.lightness !== undefined) {
+    colorObj.set(
+      'hsl.l',
+      colorObj.get('hsl.l') + color.adjustmets.lightness / 100
+    )
+  }
+
+  if (color.adjustmets.saturation !== undefined) {
+    colorObj.set(
+      'hsl.s',
+      colorObj.get('hsl.s') + color.adjustmets.saturation / 100
+    )
+  }
+
+  return colorObj.to('sRGB').toString({ format: 'hex' })
 }
 
 /**
@@ -118,11 +113,11 @@ export function getColorFromPlaceholderSettings(
  */
 export function checkContrast(color1: string, color2: string): number {
   try {
-    const c1 = new Color(color1);
-    const c2 = new Color(color2);
-    return c1.contrast(c2, 'WCAG21');
+    const c1 = new Color(color1)
+    const c2 = new Color(color2)
+    return c1.contrast(c2, 'WCAG21')
   } catch {
-    return 1; // Мінімальний контраст у разі помилки
+    return 1 // Мінімальний контраст у разі помилки
   }
 }
 
@@ -131,17 +126,105 @@ export function checkContrast(color1: string, color2: string): number {
  */
 export function getTextColorForBackground(backgroundColor: string): string {
   try {
-    const bgColor = new Color(backgroundColor);
-    const white = new Color('white');
-    const black = new Color('black');
-    
-    const whiteContrast = bgColor.contrast(white, 'WCAG21');
-    const blackContrast = bgColor.contrast(black, 'WCAG21');
-    
-    return whiteContrast > blackContrast ? 'white' : 'black';
+    const bgColor = new Color(backgroundColor)
+    const white = new Color('white')
+    const black = new Color('black')
+
+    const whiteContrast = bgColor.contrast(white, 'WCAG21')
+    const blackContrast = bgColor.contrast(black, 'WCAG21')
+
+    return whiteContrast > blackContrast ? '#ffffff' : '#000000'
   } catch {
-    return 'black'; // За замовчуванням
+    return '#000000' // За замовчуванням
   }
+}
+
+const THEME_DEFAULTS_LIGHT: UITheme['themeProps'] = {
+  background: {
+    default: 'hsl(0, 0%, 100%)',
+    paper: 'hsl(0, 0%, 95%)',
+    component: 'hsl(0, 0%, 90%)',
+  },
+  text: {
+    primary: 'hsl(240, 10%, 3.9%)',
+    secondary: 'hsl(240, 10%, 30%)',
+    disabled: 'hsl(240, 10%, 60%)',
+  },
+  success: { text: 'hsl(120, 61%, 34%)', background: 'hsl(120, 61%, 90%)' },
+  info: { text: 'hsl(210, 100%, 56%)', background: 'hsl(210, 100%, 90%)' },
+  warning: { text: 'hsl(39, 100%, 50%)', background: 'hsl(39, 100%, 90%)' },
+  error: { text: 'hsl(0, 100%, 50%)', background: 'hsl(0, 100%, 90%)' },
+  buttons: {
+    primary: {
+      contained: { background: 'hsl(240, 100%, 50%)', text: '#ffffff' },
+      outlined: { border: 'hsl(240, 100%, 50%)', text: 'hsl(240, 100%, 50%)' },
+      text: { text: 'hsl(240, 100%, 50%)' },
+    },
+    secondary: {
+      contained: { background: 'hsl(120, 61%, 34%)', text: '#ffffff' },
+      outlined: { border: 'hsl(120, 61%, 34%)', text: 'hsl(120, 61%, 34%)' },
+      text: { text: 'hsl(120, 61%, 34%)' },
+    },
+    error: {
+      contained: { background: 'hsl(0, 100%, 50%)', text: '#ffffff' },
+      outlined: { border: 'hsl(0, 100%, 50%)', text: 'hsl(0, 100%, 50%)' },
+      text: { text: 'hsl(0, 100%, 50%)' },
+    },
+    muted: {
+      contained: { background: 'hsl(0, 0%, 60%)', text: '#ffffff' },
+      outlined: { border: 'hsl(0, 0%, 60%)', text: 'hsl(0, 0%, 60%)' },
+      text: { text: 'hsl(0, 0%, 60%)' },
+    },
+    disabled: {
+      contained: { background: 'hsl(0, 0%, 88%)', text: 'hsl(0, 0%, 60%)' },
+      outlined: { border: 'hsl(0, 0%, 74%)', text: 'hsl(0, 0%, 60%)' },
+      text: { text: 'hsl(0, 0%, 60%)' },
+    },
+  },
+}
+
+const THEME_DEFAULTS_DARK: UITheme['themeProps'] = {
+  background: {
+    default: 'hsl(240, 10%, 3.9%)',
+    paper: 'hsl(240, 10%, 10%)',
+    component: 'hsl(240, 10%, 15%)',
+  },
+  text: {
+    primary: 'hsl(0, 0%, 98%)',
+    secondary: 'hsl(0, 0%, 80%)',
+    disabled: 'hsl(0, 0%, 60%)',
+  },
+  success: { text: 'hsl(120, 61%, 90%)', background: 'hsl(120, 61%, 34%)' },
+  info: { text: 'hsl(210, 100%, 90%)', background: 'hsl(210, 100%, 56%)' },
+  warning: { text: 'hsl(39, 100%, 90%)', background: 'hsl(39, 100%, 50%)' },
+  error: { text: 'hsl(0, 100%, 90%)', background: 'hsl(0, 100%, 50%)' },
+  buttons: {
+    primary: {
+      contained: { background: 'hsl(240, 100%, 50%)', text: '#ffffff' },
+      outlined: { border: 'hsl(240, 100%, 50%)', text: 'hsl(240, 100%, 50%)' },
+      text: { text: 'hsl(240, 100%, 50%)' },
+    },
+    secondary: {
+      contained: { background: 'hsl(120, 61%, 34%)', text: '#ffffff' },
+      outlined: { border: 'hsl(120, 61%, 34%)', text: 'hsl(120, 61%, 34%)' },
+      text: { text: 'hsl(120, 61%, 34%)' },
+    },
+    error: {
+      contained: { background: 'hsl(0, 100%, 50%)', text: '#ffffff' },
+      outlined: { border: 'hsl(0, 100%, 50%)', text: 'hsl(0, 100%, 50%)' },
+      text: { text: 'hsl(0, 100%, 50%)' },
+    },
+    muted: {
+      contained: { background: 'hsl(0, 0%, 60%)', text: '#ffffff' },
+      outlined: { border: 'hsl(0, 0%, 60%)', text: 'hsl(0, 0%, 60%)' },
+      text: { text: 'hsl(0, 0%, 60%)' },
+    },
+    disabled: {
+      contained: { background: 'hsl(0, 0%, 30%)', text: 'hsl(0, 0%, 60%)' },
+      outlined: { border: 'hsl(0, 0%, 40%)', text: 'hsl(0, 0%, 60%)' },
+      text: { text: 'hsl(0, 0%, 60%)' },
+    },
+  },
 }
 
 /**
@@ -149,169 +232,199 @@ export function getTextColorForBackground(backgroundColor: string): string {
  */
 export function createThemeFromPalette(
   palette: ColorPalette,
-  settings: ThemeSettings = {
-    isDarkMode: false,
-    contrastLevel: 3,
-    placeholders: {
-      background: { useDefault: true },
-      text: { useDefault: true }
+  themeOptions: Partial<UITheme>
+): UITheme {
+  const settings = {
+    isDarkMode: themeOptions.isDarkMode ?? false,
+    contrastLevel: themeOptions.contrastLevel ?? 4.5,
+    spacing: themeOptions.spacing ?? 8,
+    rounding: themeOptions.rounding ?? 8,
+    fontSize: themeOptions.fontSize ?? 16,
+  }
+
+  const defaultThemeProps = settings.isDarkMode
+    ? THEME_DEFAULTS_DARK
+    : THEME_DEFAULTS_LIGHT
+
+  let backgroundColor =
+    themeOptions.themeProps?.background.default ??
+    defaultThemeProps.background.default
+  let textColor =
+    themeOptions.themeProps?.text.primary ?? defaultThemeProps.text.primary
+
+  // Перевіряємо контраст між фоном та текстом
+  if (
+    backgroundColor === defaultThemeProps.background.default &&
+    textColor !== defaultThemeProps.text.primary
+  ) {
+    const contrast = checkContrast(
+      getThemeColor(backgroundColor, palette),
+      getThemeColor(textColor, palette)
+    )
+    if (contrast < settings.contrastLevel) {
+      backgroundColor = getTextColorForBackground(
+        getThemeColor(textColor, palette)
+      )
+    }
+  } else if (
+    backgroundColor !== defaultThemeProps.background.default &&
+    textColor === defaultThemeProps.text.primary
+  ) {
+    const contrast = checkContrast(
+      getThemeColor(backgroundColor, palette),
+      getThemeColor(textColor, palette)
+    )
+    if (contrast < settings.contrastLevel) {
+      textColor = getTextColorForBackground(
+        getThemeColor(backgroundColor, palette)
+      )
     }
   }
-): UITheme {
-  // Значення за замовчуванням
-  const defaultBackground = settings.isDarkMode ? 'hsl(240, 10%, 3.9%)' : 'hsl(0, 0%, 100%)';
-  const defaultText = settings.isDarkMode ? 'hsl(0, 0%, 98%)' : 'hsl(240, 10%, 3.9%)';
-  
-  // Отримуємо кольори для фону та тексту
-  const backgroundColor = getColorFromPlaceholderSettings(
-    settings.placeholders.background,
-    palette,
-    defaultBackground
-  );
-  
-  const textColor = getColorFromPlaceholderSettings(
-    settings.placeholders.text,
-    palette,
-    defaultText
-  );
-  
-  // Перевіряємо контраст між фоном та текстом
-  let finalTextColor = textColor;
-  const finalBackgroundColor = backgroundColor;
-  
-  // Перевіряємо, чи достатній контраст
-  const contrast = checkContrast(backgroundColor, textColor);
-  
-  // Якщо контраст недостатній, коригуємо текстовий колір
-  if (contrast < settings.contrastLevel) {
-    // Визначаємо, який колір тексту буде мати кращий контраст
-    finalTextColor = getTextColorForBackground(backgroundColor);
+
+  function getColorFor(path: string): ThemeColor {
+    return get(themeOptions.themeProps, path, get(defaultThemeProps, path))
   }
-  
-  // Створюємо кольори для компонентів
-  const bgColor = new Color(finalBackgroundColor);
-  const txtColor = new Color(finalTextColor);
-  
-  // Створюємо відтінки для фону
-  const paperBg = settings.isDarkMode
-    ? bgColor.clone().set('lch.l', bgColor.get('lch.l') + 5)
-    : bgColor.clone().set('lch.l', bgColor.get('lch.l') - 5);
-    
-  const componentBg = settings.isDarkMode
-    ? bgColor.clone().set('lch.l', bgColor.get('lch.l') + 10)
-    : bgColor.clone().set('lch.l', bgColor.get('lch.l') - 10);
-  
-  // Створюємо відтінки для тексту
-  const secondaryText = txtColor.clone().set('lch.l', 
-    settings.isDarkMode 
-      ? txtColor.get('lch.l') - 20 
-      : txtColor.get('lch.l') + 20
-  );
-  
-  const disabledText = txtColor.clone().set('lch.l', 
-    settings.isDarkMode 
-      ? txtColor.get('lch.l') - 40 
-      : txtColor.get('lch.l') + 40
-  );
-  
+
   // Створюємо кольори для кнопок та сповіщень
-  const primaryColor = palette.colors[0].color.clone();
-  const secondaryColor = palette.colors.length > 1 
-    ? palette.colors[1].color.clone() 
-    : primaryColor.clone().set('lch.h', (primaryColor.get('lch.h') + 180) % 360);
-  
+  const primaryColor = palette.colors[0].color.clone()
+  const secondaryColor =
+    palette.colors.length > 1
+      ? palette.colors[1].color.clone()
+      : primaryColor
+          .clone()
+          .set('lch.h', (primaryColor.get('lch.h') + 180) % 360)
+
   // Створюємо кольори для сповіщень
-  const infoColor = new Color('hsl(210, 100%, 56%)');
-  const successColor = new Color('hsl(120, 61%, 34%)');
-  const warningColor = new Color('hsl(39, 100%, 50%)');
-  const errorColor = new Color('hsl(0, 100%, 50%)');
-  
+  const infoColor = new Color('hsl(210, 100%, 56%)')
+  const successColor = new Color('hsl(120, 61%, 34%)')
+  const warningColor = new Color('hsl(39, 100%, 50%)')
+  const errorColor = new Color('hsl(0, 100%, 50%)')
+
   // Функція для створення кольорів кнопок
   const createButtonColors = (baseColor: Color) => {
-    const bgColor = baseColor.toString({format: 'hsl'});
-    const textColor = getTextColorForBackground(bgColor);
-    
+    const bgColor = baseColor.toString({ format: 'hsl' })
+    const textColor = getTextColorForBackground(bgColor)
+
     return {
-      contained: { 
-        background: bgColor, 
-        text: textColor 
+      contained: {
+        background: bgColor,
+        text: textColor,
       },
-      outlined: { 
-        border: bgColor, 
-        text: bgColor 
+      outlined: {
+        border: bgColor,
+        text: bgColor,
       },
-      text: { 
-        text: bgColor 
-      }
-    };
-  };
-  
+      text: {
+        text: bgColor,
+      },
+    }
+  }
+
   // Функція для створення кольорів сповіщень
   const createAlertColors = (baseColor: Color) => {
     // Створюємо світліший відтінок для фону
-    const bgColor = baseColor.clone();
-    bgColor.set('lch.l', settings.isDarkMode ? 30 : 90);
-    bgColor.set('lch.c', bgColor.get('lch.c') * 0.5);
-    
-    const bgColorHex = bgColor.toString({format: 'hsl'});
-    const textColorHex = baseColor.toString({format: 'hsl'});
-    
+    const bgColor = baseColor.clone()
+    bgColor.set('lch.l', settings.isDarkMode ? 30 : 90)
+    bgColor.set('lch.c', bgColor.get('lch.c') * 0.5)
+
+    const bgColorHex = bgColor.toString({ format: 'hsl' })
+    const textColorHex = baseColor.toString({ format: 'hsl' })
+
     // Перевіряємо контраст
-    const alertContrast = checkContrast(bgColorHex, textColorHex);
-    const finalTextColor = alertContrast >= settings.contrastLevel 
-      ? textColorHex 
-      : getTextColorForBackground(bgColorHex);
-    
+    const alertContrast = checkContrast(bgColorHex, textColorHex)
+    const finalTextColor =
+      alertContrast >= settings.contrastLevel
+        ? textColorHex
+        : getTextColorForBackground(bgColorHex)
+
     return {
       background: bgColorHex,
-      text: finalTextColor
-    };
-  };
-  
+      text: finalTextColor,
+    }
+  }
+
+  const getBGcolors = () => {
+    const defaultBg = getColorFor('background.default')
+    const paperBg =
+      themeOptions.themeProps?.background.paper ??
+      new Color(Color.lighten(getThemeColor(defaultBg, palette), 0.05))
+        .to('sRGB')
+        .toString({ format: 'hsl' })
+    const componentBg =
+      themeOptions.themeProps?.background.component ??
+      new Color(Color.lighten(getThemeColor(defaultBg, palette), 0.1))
+        .to('sRGB')
+        .toString({ format: 'hsl' })
+
+    return {
+      default: defaultBg,
+      paper: paperBg,
+      component: componentBg,
+    }
+  }
+
+  const getTextColors = () => {
+    const primaryText = getColorFor('text.primary')
+    const secondaryText =
+      themeOptions.themeProps?.text.secondary ??
+      new Color(
+        Color.lighten(
+          getThemeColor(primaryText, palette),
+          settings.isDarkMode ? -20 : 20
+        )
+      )
+        .to('sRGB')
+        .toString({ format: 'hsl' })
+    const disabledText =
+      themeOptions.themeProps?.text.secondary ??
+      new Color(
+        Color.lighten(
+          getThemeColor(primaryText, palette),
+          settings.isDarkMode ? -40 : 40
+        )
+      )
+        .to('sRGB')
+        .toString({ format: 'hsl' })
+
+    return {
+      primary: primaryText,
+      secondary: secondaryText,
+      disabled: disabledText,
+    }
+  }
+
   // Створюємо тему
   return {
     id: generateUUID(),
     palette,
-    settings,
-    rounding: 8,
-    spacing: 8,
-    fontSize: 16,
+    ...settings,
     themeProps: {
-      background: {
-        default: finalBackgroundColor,
-        paper: paperBg.toString({format: 'hsl'}),
-        component: componentBg.toString({format: 'hsl'})
-      },
-      text: {
-        primary: finalTextColor,
-        secondary: secondaryText.toString({format: 'hsl'}),
-        disabled: disabledText.toString({format: 'hsl'})
-      },
-      alerts: {
-        info: createAlertColors(infoColor),
-        success: createAlertColors(successColor),
-        warning: createAlertColors(warningColor),
-        error: createAlertColors(errorColor)
-      },
+      background: getBGcolors(),
+      text: getTextColors(),
+      success: createAlertColors(successColor),
+      info: createAlertColors(infoColor),
+      warning: createAlertColors(warningColor),
+      error: createAlertColors(errorColor),
+
       buttons: {
         primary: createButtonColors(primaryColor),
         secondary: createButtonColors(secondaryColor),
         error: createButtonColors(errorColor),
         muted: createButtonColors(new Color('hsl(0, 0%, 60%)')),
         disabled: {
-          contained: { 
-            background: 'hsl(0, 0%, 88%)', 
-            text: 'hsl(0, 0%, 60%)' 
+          contained: {
+            background: 'hsl(0, 0%, 88%)',
+            text: 'hsl(0, 0%, 60%)',
           },
-          outlined: { 
-            border: 'hsl(0, 0%, 74%)', 
-            text: 'hsl(0, 0%, 60%)' 
+          outlined: {
+            border: 'hsl(0, 0%, 74%)',
+            text: 'hsl(0, 0%, 60%)',
           },
-          text: { 
-            text: 'hsl(0, 0%, 60%)' 
-          }
-        }
-      }
-    }
-  };
+          text: {
+            text: 'hsl(0, 0%, 60%)',
+          },
+        },
+      },
+    },
+  }
 }
