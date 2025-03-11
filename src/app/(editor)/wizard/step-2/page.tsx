@@ -33,7 +33,12 @@ function Step2Content() {
 
     // Якщо немає теми в URL, створюємо нову
     const baseColor = new Color('#3b82f6')
-    const palette = createPalette(baseColor, PaletteStrategy.ANALOGOUS)
+    const palette = createPalette(
+      baseColor,
+      null,
+      PaletteStrategy.ANALOGOUS,
+      'pastel'
+    )
 
     // Створюємо тему з палітри
     const initialTheme = createThemeFromPalette(palette, {

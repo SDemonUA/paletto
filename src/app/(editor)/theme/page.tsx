@@ -38,7 +38,9 @@ const createDefaultTheme = () => {
   // Створюємо базову палітру з синім кольором
   const palette = createPalette(
     new Color('#2196f3'),
-    PaletteStrategy.COMPLEMENTARY
+    null,
+    PaletteStrategy.COMPLEMENTARY,
+    'pastel'
   )
 
   // Створюємо тему
@@ -263,24 +265,23 @@ function ThemePageContent() {
             {/* Додані нові ColorPicker2 для основних кольорів */}
             <ColorPicker3
               label="Основний колір"
-              color={theme.palette.baseColor.toString({
-                format: 'hex',
-              })}
+              color={theme.palette.baseColor.color}
               onChange={(color) =>
                 setTheme({
                   ...theme,
                   palette: {
                     ...theme.palette,
-                    baseColor: new Color(color),
+                    baseColor: {
+                      ...theme.palette.baseColor,
+                      color: color,
+                    },
                   },
                 })
               }
             />
             <ColorPicker3
               label="Другорядний колір"
-              color={theme.palette.colors[1].color.toString({
-                format: 'hex',
-              })}
+              color={theme.palette.colors[1].color}
               onChange={(color) =>
                 setTheme({
                   ...theme,
@@ -290,7 +291,7 @@ function ThemePageContent() {
                       theme.palette.colors[0],
                       {
                         ...theme.palette.colors[1],
-                        color: new Color(color),
+                        color: color,
                       },
                       ...theme.palette.colors.slice(2),
                     ],

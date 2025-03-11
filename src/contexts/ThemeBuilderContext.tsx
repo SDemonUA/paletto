@@ -66,7 +66,12 @@ export function useThemeBuilder() {
 
 function createDefaultTheme(): UITheme {
   return createThemeFromPalette(
-    createPalette(new Color('#2196f3'), PaletteStrategy.COMPLEMENTARY),
+    createPalette(
+      new Color('#2196f3'),
+      null,
+      PaletteStrategy.COMPLEMENTARY,
+      'pastel'
+    ),
     {}
   )
 }

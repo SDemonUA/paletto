@@ -837,7 +837,7 @@ export default function ThemePreview({ theme }: ThemePreviewProps) {
             </h2>
             <div className="grid grid-cols-5 gap-2">
               {theme.palette.colors.map((colorEntry) => {
-                const colorHex = colorEntry.color.toString({ format: 'hex' })
+                const colorHex = colorEntry.color
                 const textColor = getContrastTextColor(colorHex)
                 return (
                   <div

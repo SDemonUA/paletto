@@ -152,7 +152,7 @@ export default function PlaceholderColorPicker({
                 paletteId === color.id ? 'ring-2 ring-blue-500' : ''
               }`}
               style={{
-                backgroundColor: color.color.toString({ format: 'hex' }),
+                backgroundColor: color.color,
               }}
               onClick={() => handleColorSelect(color.id)}
             />

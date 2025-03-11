@@ -14,11 +14,15 @@ import { createThemeFromPalette } from '@/lib/theme-utils'
 import {
   createPalette as createPaletteFromLib,
   PaletteStrategy,
+  PaletteIntensity,
 } from '@/lib/palette-utils'
-import { generateUUID, serializeWithColor } from '@/lib/utils'
+import { serializeWithColor } from '@/lib/utils'
+import IntensitySelector from '@/components/IntensitySelecor'
 
 export default function Wizard2() {
   const router = useRouter()
+  const [paletteIntensity, setPaletteIntensity] =
+    useState<PaletteIntensity>('vibrant')
   const [baseColor, setBaseColor] = useState<string>('')
   const [secondaryColor, setSecondaryColor] = useState<string>('')
   const [isDarkTheme, setIsDarkTheme] = useState<boolean>(false)
@@ -47,8 +51,29 @@ export default function Wizard2() {
         </p>
 
         <Step
-          label="Основний колір"
+          label="Інтенсивність палітри"
           index={1}
+          activeStep={step}
+          onNext={goToNextStep}
+        >
+          <div className="flex flex-col gap-4">
+            <p className="text-center text-gray-600">
+              Виберіть стиль та інтенсивність кольорів для вашої теми
+            </p>
+            <div className="max-w-sm mx-auto w-full">
+              <IntensitySelector
+                selectedIntensity={paletteIntensity}
+                onIntensityChange={(intensity) =>
+                  setPaletteIntensity(intensity)
+                }
+              />
+            </div>
+          </div>
+        </Step>
+
+        <Step
+          label="Основний колір"
+          index={2}
           activeStep={step}
           onNext={baseColor ? goToNextStep : undefined}
         >
@@ -63,7 +88,7 @@ export default function Wizard2() {
 
         <Step
           label="Другорядний колір"
-          index={2}
+          index={3}
           activeStep={step}
           onNext={secondaryColor ? goToNextStep : undefined}
         >
@@ -88,7 +113,7 @@ export default function Wizard2() {
           </Button>
         </Step>
 
-        <Step label="Тема" index={3} activeStep={step} onNext={goToNextStep}>
+        <Step label="Тема" index={4} activeStep={step} onNext={goToNextStep}>
           <div className="flex flex-row relative">
             <button
               className="bg-white p-2 flex-1 cursor-pointer hover:bg-gray-100"
@@ -114,7 +139,7 @@ export default function Wizard2() {
 
         <Step
           label="Відступи"
-          index={4}
+          index={5}
           activeStep={step}
           onNext={goToNextStep}
         >
@@ -136,7 +161,7 @@ export default function Wizard2() {
 
         <Step
           label="Округлення"
-          index={5}
+          index={6}
           activeStep={step}
           onNext={goToNextStep}
         >
@@ -158,20 +183,16 @@ export default function Wizard2() {
 
         <Step
           label="Готово!"
-          index={6}
+          index={7}
           activeStep={step}
           onNext={() => {
-            // Створюємо палітру
+            // Створюємо палітру з урахуванням вибраної інтенсивності
             const palette = createPaletteFromLib(
-              new Color(baseColor),
-              PaletteStrategy.COMPLEMENTARY
+              baseColor,
+              secondaryColor,
+              PaletteStrategy.COMPLEMENTARY,
+              paletteIntensity
             )
-            // Додаємо другорядний колір
-            palette.colors.push({
-              id: generateUUID(),
-              name: 'Secondary',
-              color: new Color(secondaryColor),
-            })
 
             // Створюємо тему
             const theme = createThemeFromPalette(palette, {

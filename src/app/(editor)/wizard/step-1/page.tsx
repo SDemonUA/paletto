@@ -11,10 +11,13 @@ import {
   createPalette,
   PaletteStrategy,
   ColorPalette,
+  PaletteIntensity,
+  applyIntensity,
 } from '@/lib/palette-utils'
 import { createThemeFromPalette, ThemeColor, UITheme } from '@/lib/theme-utils'
 import Color from 'colorjs.io'
 import { serializeWithColor } from '@/lib/utils'
+import IntensitySelector from '../../../../components/IntensitySelecor'
 
 export default function Step1() {
   const router = useRouter()
@@ -22,15 +25,17 @@ export default function Step1() {
   const [strategy, setStrategy] = useState<PaletteStrategy>(
     PaletteStrategy.ANALOGOUS
   )
+  const [intensity, setIntensity] = useState<PaletteIntensity>('pastel')
+
   const [palette, setPalette] = useState<ColorPalette | null>(
-    createPalette(new Color('#3498db'), PaletteStrategy.ANALOGOUS)
+    createPalette(new Color('#3498db'), null, strategy, intensity)
   )
   const [theme, setTheme] = useState<UITheme | null>(null)
 
-  // Створюємо палітру при зміні базового кольору або стратегії
+  // Створюємо палітру при зміні базового кольору, стратегії або інтенсивності
   useEffect(() => {
-    if (baseColor && strategy) {
-      const newPalette = createPalette(baseColor, strategy)
+    if (baseColor && strategy && intensity) {
+      const newPalette = createPalette(baseColor, null, strategy, intensity)
 
       const settings: Pick<
         UITheme,
@@ -46,7 +51,7 @@ export default function Step1() {
       const newTheme = createThemeFromPalette(newPalette, settings)
       setTheme(newTheme)
     }
-  }, [baseColor, strategy])
+  }, [baseColor, strategy, intensity])
 
   // Обробник для зміни базового кольору
   const handleBaseColorChange = (color: Color) => {
@@ -61,9 +66,21 @@ export default function Step1() {
   // Обробник для перегенерації палітри
   const handleRegeneratePalette = () => {
     if (palette) {
-      const newPalette = createPalette(baseColor, strategy)
+      const newPalette = createPalette(baseColor, null, strategy, intensity)
       setPalette(newPalette)
 
+      if (theme) {
+        const newTheme = createThemeFromPalette(newPalette, theme)
+        setTheme(newTheme)
+      }
+    }
+  }
+
+  const handleIntensityChange = (newIntensity: PaletteIntensity) => {
+    setIntensity(newIntensity)
+    if (palette) {
+      const newPalette = createPalette(baseColor, null, strategy, newIntensity)
+      setPalette(newPalette)
       if (theme) {
         const newTheme = createThemeFromPalette(newPalette, theme)
         setTheme(newTheme)
@@ -85,7 +102,8 @@ export default function Step1() {
       randomColor.toGamut('srgb')
     }
 
-    setBaseColor(randomColor)
+    setBaseColor(applyIntensity(randomColor, intensity))
+    handleRegeneratePalette()
   }
 
   const handlePlaceholderChange = (
@@ -124,6 +142,14 @@ export default function Step1() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-6">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Інтенсивність</h2>
+            <IntensitySelector
+              selectedIntensity={intensity}
+              onIntensityChange={handleIntensityChange}
+            />
+          </div>
+
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-xl font-semibold mb-4">Базовий колір</h2>
             <BaseColorPicker

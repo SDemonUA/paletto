@@ -1,51 +1,52 @@
-'use client';
+'use client'
 
-import { ColorPalette } from '@/lib/palette-utils';
-import Color from 'colorjs.io';
+import { ColorPalette } from '@/lib/palette-utils'
+import Color from 'colorjs.io'
 
 interface PaletteDisplayProps {
-  palette: ColorPalette;
+  palette: ColorPalette
 }
 
 export default function PaletteDisplay({ palette }: PaletteDisplayProps) {
   // Функція для визначення контрастного кольору тексту
-  const getContrastTextColor = (backgroundColor: Color): string => {
+  const getContrastTextColor = (backgroundColor: string): string => {
     try {
-      const white = new Color('white');
-      const black = new Color('black');
-      
-      const whiteContrast = backgroundColor.contrast(white, 'WCAG21');
-      const blackContrast = backgroundColor.contrast(black, 'WCAG21');
-      
-      return whiteContrast > blackContrast ? 'white' : 'black';
+      const white = new Color('white')
+      const black = new Color('black')
+
+      const colorInstance = new Color(backgroundColor)
+      const whiteContrast = colorInstance.contrast(white, 'WCAG21')
+      const blackContrast = colorInstance.contrast(black, 'WCAG21')
+
+      return whiteContrast > blackContrast ? 'white' : 'black'
     } catch {
-      return 'black'; // За замовчуванням
+      return 'black' // За замовчуванням
     }
-  };
-  
+  }
+
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {palette.colors.map((colorEntry) => {
-          const colorHex = colorEntry.color.toString({format: 'hex'});
-          const textColor = getContrastTextColor(colorEntry.color);
-          
+          const { color } = colorEntry
+          const textColor = getContrastTextColor(color)
+
           return (
-            <div 
+            <div
               key={colorEntry.id}
               className="p-4 rounded-lg h-24 flex flex-col justify-between"
-              style={{ backgroundColor: colorHex }}
+              style={{ backgroundColor: color }}
             >
               <div className="text-sm font-medium" style={{ color: textColor }}>
                 {colorEntry.name}
               </div>
               <div className="text-xs" style={{ color: textColor }}>
-                {colorHex}
+                {color}
               </div>
             </div>
-          );
+          )
         })}
       </div>
     </div>
-  );
-} 
+  )
+}

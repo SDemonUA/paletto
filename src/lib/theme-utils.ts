@@ -86,7 +86,7 @@ export function getThemeColor(
     return '#000000'
   }
 
-  const colorObj = colorEntry.color.clone()
+  const colorObj = new Color(colorEntry.color)
   if (color.adjustmets.alpha !== undefined) {
     colorObj.set('alpha', color.adjustmets.alpha)
   }
@@ -286,10 +286,10 @@ export function createThemeFromPalette(
   }
 
   // Створюємо кольори для кнопок та сповіщень
-  const primaryColor = palette.colors[0].color.clone()
+  const primaryColor = new Color(palette.colors[0].color)
   const secondaryColor =
     palette.colors.length > 1
-      ? palette.colors[1].color.clone()
+      ? new Color(palette.colors[1].color)
       : primaryColor
           .clone()
           .set('lch.h', (primaryColor.get('lch.h') + 180) % 360)

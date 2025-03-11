@@ -200,7 +200,9 @@ export function createMuiConfig(theme: UITheme): string {
 import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme(${JSON.stringify(
-    createMuiThemeConfig(theme)
+    createMuiThemeConfig(theme),
+    null,
+    2
   )});`
 }
 
