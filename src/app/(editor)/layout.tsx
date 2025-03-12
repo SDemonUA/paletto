@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Overpass } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 import '../globals.css'
 import { PreferencesProvider } from '@/contexts/PreferencesContext'
 import Header from '@/components/Header'
@@ -31,6 +32,7 @@ export default function RootLayout({
           <Header />
           {children}
         </PreferencesProvider>
+        <Analytics />
       </body>
     </html>
   )
