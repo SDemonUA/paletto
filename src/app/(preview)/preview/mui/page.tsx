@@ -6,7 +6,7 @@ import Alert from '@mui/material/Alert'
 import AlertTitle from '@mui/material/AlertTitle'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
-import { Container } from '@mui/material'
+import { Container, CssBaseline } from '@mui/material'
 import CardContent from '@mui/material/CardContent'
 import CardHeader from '@mui/material/CardHeader'
 import Divider from '@mui/material/Divider'
@@ -51,6 +51,7 @@ export default function MaterialUIPreview() {
     <div>
       {muiTheme && (
         <ThemeProvider theme={muiTheme}>
+          <CssBaseline />
           <Container>
             {/* Typography Section */}
             <section>
