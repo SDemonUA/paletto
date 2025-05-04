@@ -300,48 +300,48 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '${getThemeColor(
+        primary: "${getThemeColor(
           theme.themeProps.buttons.primary.contained.background,
           theme.palette
-        )}',
-        secondary: '${getThemeColor(
+        )}",
+        secondary: "${getThemeColor(
           theme.themeProps.buttons.secondary.contained.background,
           theme.palette
-        )}',
-        background: '${getThemeColor(
+        )}",
+        background: "${getThemeColor(
           theme.themeProps.background.default,
           theme.palette
-        )}',
-        error: '${getThemeColor(
+        )}",
+        error: "${getThemeColor(
           theme.themeProps.buttons.error.contained.background,
           theme.palette
-        )}',
-        surface: '${getThemeColor(
+        )}",
+        surface: "${getThemeColor(
           theme.themeProps.background.paper,
           theme.palette
-        )}',
-        'on-surface': '${getThemeColor(
+        )}",
+        "on-surface": "${getThemeColor(
           theme.themeProps.text.primary,
           theme.palette
-        )}',
-        'on-primary': '${getThemeColor(
+        )}",
+        "on-primary": "${getThemeColor(
           theme.themeProps.buttons.primary.contained.text,
           theme.palette
-        )}',
-        'on-secondary': '${getThemeColor(
+        )}",
+        "on-secondary": "${getThemeColor(
           theme.themeProps.buttons.secondary.contained.text,
           theme.palette
-        )}',
-        'on-error': '${getThemeColor(
+        )}",
+        "on-error": "${getThemeColor(
           theme.themeProps.buttons.error.contained.text,
           theme.palette
-        )}',
+        )}",
       },
       borderRadius: {
-        DEFAULT: '${theme.rounding || defaultRadius}px',
+        DEFAULT: "${theme.rounding || defaultRadius}px",
       },
       spacing: {
-        DEFAULT: '${theme.spacing || defaultSpacing}px',
+        DEFAULT: "${theme.spacing || defaultSpacing}px",
       },
     },
   },

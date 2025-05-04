@@ -15,3 +15,9 @@ Refer to [./project-instructions.md](./project-instructions.md) for project-spec
 - Stick to the DRY principle
 - Use meaningful commit messages
 - Use clear and concise commit messages
+- Use React and TypeScript for the frontend.
+- Use Tailwind CSS for styling.
+- Write clean, modular, and reusable code.
+- Use functional components and hooks.
+- Stick to the latest React and TypeScript best practices.
+- Stick to DRY (Don't Repeat Yourself) principles.
