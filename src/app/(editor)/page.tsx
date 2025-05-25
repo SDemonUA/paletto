@@ -96,7 +96,7 @@ export default function WelcomePage() {
           <h2 className="text-2xl font-semibold text-indigo-700 mb-6 text-center">
             Технології використані у проекті
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <TechCard name="Next.js" icon="🔺" url="https://nextjs.org/" />
             <TechCard name="React" icon="⚛️" url="https://react.dev/" />
             <TechCard
@@ -105,11 +105,6 @@ export default function WelcomePage() {
               url="https://tailwindcss.com/"
             />
             <TechCard name="colorjs.io" icon="🌈" url="https://colorjs.io/" />
-            <TechCard
-              name="Cursor AI"
-              icon="🤖"
-              url="https://www.cursor.com/"
-            />
           </div>
         </div>
 
