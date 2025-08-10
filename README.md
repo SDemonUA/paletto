@@ -24,3 +24,11 @@ Paletto is a friendly tool for developers to design and preview a custom theme f
 - Create browser extension
 
 Enjoy a fast, visual, and developer-focused experience!
+
+## Note about Material-UI
+
+Next packages installed as material-ui requirements, they shouldn't be used in main app ui, only in preview of mui theme:
+
+```bash
+npm install @mui/material @emotion/react @emotion/styled
+```
