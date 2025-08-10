@@ -24,9 +24,17 @@ import {
   Paper,
 } from "@mui/material";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, Suspense } from "react";
 
-export default function MuiPreviewPage() {
+export default function WrappedInSuspensePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MuiPreviewPage />
+    </Suspense>
+  );
+}
+
+function MuiPreviewPage() {
   const json = useSearchParams().get("palette") || "";
   const palette = useMemo(() => {
     try {
