@@ -18,10 +18,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { resolveColorValue } from "@/lib/color-utils";
 import { generatePaletteAction } from "@/actions/generatePalette";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { z } from "zod";
 
-export default function GeneratePalettePage() {
+export default function WrappedInSuspensePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GeneratePalettePage />
+    </Suspense>
+  );
+}
+
+function GeneratePalettePage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [palette, setPalette] = useState<UiPalette | null>(null);
