@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { getColorName } from "@/lib/colorUtils";
+import { getColorName } from "@/lib/color-utils";
 import chroma from "chroma-js";
 
 interface ColorSwatchProps {

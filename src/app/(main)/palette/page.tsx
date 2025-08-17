@@ -12,25 +12,31 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { FadeInTransition } from "@/components/fade-in-transition";
 
-import { SelectFrameworkInput } from "./components/SelectFrameworkInput";
-import { ColorInput } from "./components/ColorInput";
+import { ColorInput } from "./components/color-input";
+import { UiPaletteHarmonyScheme, UiPalettePersonalityScheme } from "@/schemas";
+import { generatePaletteAction } from "@/actions/generatePalette";
 
-const colorPersonalities = [
+const colorPersonalities: {
+  type: z.infer<typeof UiPalettePersonalityScheme>;
+  harmony: z.infer<typeof UiPaletteHarmonyScheme>;
+  label: string;
+}[] = [
   { type: "professional", label: "🏢 Professional", harmony: "complementary" },
   { type: "playful", label: "🎉 Playful", harmony: "triadic" },
-  { type: "calm", label: "🌿 Calm", harmony: "analogous" },
+  { type: "calm", label: "🌿 Calm", harmony: "monochromatic" },
   { type: "energetic", label: "⚡ Energetic", harmony: "tetradic" },
-  { type: "bold", label: "🎯 Bold", harmony: "complementary" },
-  { type: "elegant", label: "✨ Elegant", harmony: "analogous" },
+  { type: "elegant", label: "✨ Elegant", harmony: "monochromatic" },
+  { type: "vibrant", label: "🌈 Vibrant", harmony: "complementary" },
 ];
 
+// TODO: implement real statistical data for this values
 const popularColors = ["#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4"];
 const trendingColors = ["#F97316", "#84CC16", "#EC4899", "#6366F1", "#14B8A6", "#F59E0B"];
 
 const formSchema = z.object({
   baseColor: z.string(),
-  personality: z.enum(["professional", "playful", "calm", "energetic", "bold", "elegant"]),
-  harmonyType: z.enum(["complementary", "analogous", "triadic", "tetradic"]),
+  personality: UiPalettePersonalityScheme,
+  harmonyType: UiPaletteHarmonyScheme,
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -47,13 +53,10 @@ export default function PalettePage() {
   const { watch, handleSubmit } = form;
   const personality = watch("personality");
 
-  const getRecommendedHarmony = (): "complementary" | "analogous" | "triadic" | "tetradic" => {
+  const getRecommendedHarmony = (): z.infer<typeof UiPaletteHarmonyScheme> => {
     if (!personality) return "complementary";
     const selectedPersonality = colorPersonalities.find((p) => p.type === personality);
-    return (
-      (selectedPersonality?.harmony as "complementary" | "analogous" | "triadic" | "tetradic") ||
-      "complementary"
-    );
+    return selectedPersonality?.harmony || "complementary";
   };
 
   const generateRandomColor = () => {
@@ -67,22 +70,16 @@ export default function PalettePage() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      const response = await fetch("/api/generate-palette", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      // Using Server Action instead of API route
+      const result = await generatePaletteAction(data);
 
-      if (!response.ok) {
-        throw new Error("Failed to generate palette");
+      if (result.error) {
+        console.error("Error generating palette:", result.error);
+        return;
       }
 
-      const palette = await response.json();
-
-      // Navigate to the generate page with the query parameters
-      router.push(`/palette/result?json=${encodeURIComponent(JSON.stringify(palette))}`);
+      // Navigate to the result page with the palette
+      router.push(`/palette/result?json=${encodeURIComponent(JSON.stringify(result.palette))}`);
     } catch (error) {
       console.error("Error generating palette:", error);
     }
@@ -96,11 +93,6 @@ export default function PalettePage() {
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-6">
             <h2 className="mt-12 text-2xl">Step by Step</h2>
-
-            {/* Framework Selection */}
-            <Step description="Which framework are you using? You can change it later.">
-              <SelectFrameworkInput name="framework" />
-            </Step>
 
             {/* Color Source Selection */}
             <Step description="What's your brand color?">
@@ -230,6 +222,9 @@ export default function PalettePage() {
                       </ToggleGroupItem>
                       <ToggleGroupItem value="tetradic" className="cursor-pointer h-auto p-3">
                         Tetradic
+                      </ToggleGroupItem>
+                      <ToggleGroupItem value="monochromatic" className="cursor-pointer h-auto p-3">
+                        Monochromatic
                       </ToggleGroupItem>
                     </ToggleGroup>
                   )}

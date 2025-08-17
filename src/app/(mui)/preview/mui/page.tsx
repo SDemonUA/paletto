@@ -1,6 +1,6 @@
 "use client";
 
-import { createMuiThemeOptions } from "@/lib/muiUtils";
+import { createMuiThemeOptions } from "@/lib/mui-utils";
 import {
   Alert,
   Button,
@@ -23,33 +23,36 @@ import {
   CssBaseline,
   Paper,
 } from "@mui/material";
-import { useSearchParams } from "next/navigation";
-import { useMemo, Suspense } from "react";
+import { useMemo, useState, useEffect } from "react";
 
-export default function WrappedInSuspensePage() {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <MuiPreviewPage />
-    </Suspense>
-  );
-}
+export default function MuiPreviewPage() {
+  const [palette, setPalette] = useState(null);
 
-function MuiPreviewPage() {
-  const json = useSearchParams().get("palette") || "";
-  const palette = useMemo(() => {
-    try {
-      return JSON.parse(json);
-    } catch {
-      return null;
-    }
-  }, [json]);
+  // Listen for palette updates via postMessage
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'PALETTE_UPDATE' && event.data.palette) {
+        setPalette(event.data.palette);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    // Notify parent that we're ready to receive updates
+    window.parent.postMessage({ type: 'PREVIEW_READY' }, '*');
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
+  }, []);
+
   const theme = useMemo(
     () => (palette ? createTheme(createMuiThemeOptions(palette)) : createTheme()),
     [palette]
   );
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} noSsr>
       <CssBaseline />
       <Container maxWidth="sm">
         <Stack spacing={3}>
@@ -65,7 +68,16 @@ function MuiPreviewPage() {
           <Paper elevation={3} sx={{ padding: 3 }}>
             <Stack spacing={2}>
               <Typography variant="h5">Sign in</Typography>
+              <Alert severity="success">
+                This is an inline message. Use your credentials to continue.
+              </Alert>
               <Alert severity="info">
+                This is an inline message. Use your credentials to continue.
+              </Alert>
+              <Alert severity="warning">
+                This is an inline message. Use your credentials to continue.
+              </Alert>
+              <Alert severity="error">
                 This is an inline message. Use your credentials to continue.
               </Alert>
               <TextField

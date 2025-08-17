@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { UiPalette } from "@/schemas";
-import { exportMuiTheme } from "@/lib/muiUtils";
+import { exportMuiTheme } from "@/lib/mui-utils";
 import { CheckIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 
 interface ExportButtonProps {

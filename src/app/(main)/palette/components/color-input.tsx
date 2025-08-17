@@ -5,7 +5,7 @@ import chroma from "chroma-js";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { inputClassName } from "@/components/ui/input";
-import { getColorName } from "@/lib/colorUtils";
+import { getColorName } from "@/lib/color-utils";
 
 export function ColorInput({ name }: { name: string }) {
   const { control } = useFormContext();
